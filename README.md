@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="docs/images/1-hero-ko.png" alt="KleanTalk" width="720" />
-</p>
-
 <h1 align="center">KleanTalk</h1>
 
 <p align="center">
@@ -21,6 +17,7 @@
   <a href="#-동작-방식">동작 방식</a> ·
   <a href="#-다른-방식과-비교">비교</a> ·
   <a href="#-문제-해결">문제 해결</a> ·
+  <a href="https://leejongyoung.github.io/KleanTalk/">🌐 웹사이트</a> ·
   <a href="#english">English</a>
 </p>
 
@@ -152,9 +149,8 @@ sudo ./scripts/uninstall-adserver.sh    # 서버만 제거
 <details>
 <summary><strong>English</strong></summary>
 
-![KleanTalk](docs/images/1-hero-en.png)
-
 KleanTalk turns the ad slot in KakaoTalk for Mac into **empty space in KakaoTalk's own colors**.
+
 It doesn't patch or re-sign the KakaoTalk app, and doesn't touch your chats or settings.
 
 ### Install
