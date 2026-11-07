@@ -120,6 +120,37 @@ mv -f "$TMP_HOSTS" /etc/hosts
 trap - EXIT
 dscacheutil -flushcache; killall mDNSResponder 2>/dev/null || true
 
+# 5. 모든 사용자 로그인 확인: 시스템 에이전트로 등록한다 (fork #11).
+#    인증서 신뢰가 사용자 도메인이라, 다른 계정에서는 그 계정으로 한 번 신뢰 등록이 필요하다.
+#    시스템 에이전트가 각 로그인 때 백그라운드 확인을 돌려, 풀렸으면 창을 띄워 안내한다.
+#    앱이 공용 위치(/Applications)에 있을 때만 등록한다.
+AGENT_LABEL=com.myungchul.kleantalk
+SYSAGENT=/Library/LaunchAgents/$AGENT_LABEL.plist
+APP_DIR=${SRC%/Contents/Resources/kleantalk-adserver}
+if [[ $SRC == */Contents/Resources/kleantalk-adserver && $APP_DIR == /Applications/* && -x $APP_DIR/Contents/MacOS/KleanTalk ]]; then
+  cat > "$SYSAGENT" <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key><string>$AGENT_LABEL</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>$APP_DIR/Contents/MacOS/KleanTalk</string>
+		<string>--background</string>
+	</array>
+	<key>RunAtLoad</key><true/>
+	<key>ProcessType</key><string>Interactive</string>
+	<key>LimitLoadToSessionType</key><string>Aqua</string>
+</dict>
+</plist>
+EOF
+  chown root:wheel "$SYSAGENT"; chmod 644 "$SYSAGENT"
+  echo "모든 사용자 로그인 확인을 등록했습니다 ($SYSAGENT). 다른 계정에서는 첫 로그인 때 신뢰 등록 안내가 뜹니다."
+else
+  echo "참고: 앱이 /Applications에 없어서 설치한 계정에서만 로그인 확인이 돕니다 (멀티유저 미지원, #11). /Applications로 옮긴 뒤 다시 설치하세요."
+fi
+
 echo "설치했습니다. 터미널로 설치했다면 마지막으로 인증서 신뢰를 등록하세요 (sudo 없이, macOS 확인 창이 뜸):"
 echo "  security add-trusted-cert -r trustRoot -p ssl -s $HOST \"$DIR/cert.pem\""
 echo "그다음 카카오톡을 종료했다가 다시 열면 광고 자리가 빈 공간으로 바뀝니다."

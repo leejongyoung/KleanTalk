@@ -8,6 +8,7 @@ upstream(`showmeyourway-sketch/KleanTalk`)의 fork입니다. 분기점: v1.11 (`
 - **버그 신고·업데이트 확인이 이 fork를 가리킵니다.** (`Sources/KleanTalk.swift`의 `issueNewURL`, README 링크)
 - **릴리스 스크립트는 fork 전용.** (`scripts/release.sh`의 `REPO=leejongyoung/KleanTalk`, origin 확인 포함)
 - **식별자는 upstream과 공유 유지.** 번들 ID·LaunchDaemon 라벨·로그 서브시스템(`com.myungchul.kleantalk*`)·hosts 블록 표식은 바꾸지 않습니다. 설치된 기존 환경과 충돌하지 않게 하려는 의도입니다.
+- **멀티유저 지원 (#11, upstream #1 대응).** 인증서 신뢰가 사용자 도메인이라 계정마다 한 번씩 신뢰 등록이 필요합니다. 설치 스크립트가 앱이 `/Applications`에 있을 때 시스템 로그인 에이전트(`/Library/LaunchAgents`)를 등록해, 모든 계정(향후 계정 포함)의 로그인 때 백그라운드 확인을 돕니다. 풀려 있으면 창을 띄워 안내하므로, 다른 계정에서는 첫 로그인 때 안내대로 **다시 설치**(신뢰 등록)를 한 번 하세요. `~/Applications` 설치에서는 설치한 계정에서만 돕니다.
 
 ## upstream 동기화
 

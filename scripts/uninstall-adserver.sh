@@ -11,6 +11,12 @@ ADDR=127.84.11.1
 
 launchctl bootout system/$LABEL 2>/dev/null || true
 rm -f /Library/LaunchDaemons/$LABEL.plist
+# 모든 사용자 로그인 확인(시스템 에이전트)과 예전 설치의 사용자별 항목을 지운다 (#11).
+rm -f /Library/LaunchAgents/com.myungchul.kleantalk.plist
+for home in /Users/*; do
+  [[ -d $home ]] || continue
+  rm -f "$home/Library/LaunchAgents/com.myungchul.kleantalk.plist" 2>/dev/null || true
+done
 if [[ -f $DIR/cert.pem ]]; then
   FP=$(/usr/bin/openssl x509 -in "$DIR/cert.pem" -noout -fingerprint -sha1 | cut -d= -f2 | tr -d :)
   security delete-certificate -Z "$FP" /Library/Keychains/System.keychain 2>/dev/null || true
