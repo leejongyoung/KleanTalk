@@ -256,7 +256,16 @@ enum LoginItem {
         FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/LaunchAgents/\(label).plist")
     }
 
+    /// 시스템 에이전트 경로 (설치 스크립트가 모든 사용자용으로 등록, #11)
+    static var systemAgentPath: String { "/Library/LaunchAgents/\(label).plist" }
+
     static func set(_ on: Bool) {
+        // 시스템 에이전트가 있으면 사용자 항목은 만들지 않는다 (중복 실행 방지).
+        // 예전 설치의 사용자 항목은 정리한다.
+        if FileManager.default.fileExists(atPath: systemAgentPath) {
+            try? FileManager.default.removeItem(at: url)
+            return
+        }
         guard on else { try? FileManager.default.removeItem(at: url); return }
         let plist: [String: Any] = [
             "Label": label,
