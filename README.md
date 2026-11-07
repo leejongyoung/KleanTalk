@@ -96,7 +96,7 @@ KleanTalk을 열고 **제거…**를 누릅니다. 서버·인증서 신뢰·hos
 - macOS 12 이상, Apple Silicon·Intel. 카톡 26.9.0에서 확인.
 - 카카오가 광고 방식을 바꾸면 동작하지 않을 수 있습니다 (주소·응답 형식·신호 변경 시).
 - 빈 광고 색은 다크 모드 실측치, 인증서 기한은 365일입니다.
-- 이 fork에는 자동 업데이트가 없습니다. 새 버전은 Releases에서 DMG를 받아 다시 설치하세요. (자세한 사정은 [`FORK.md`](FORK.md))
+- 이 fork는 fork 전용 서명 키로 자동 업데이트를 확인합니다 (하루 1회, 메뉴의 **업데이트 확인…**). 업데이트 파일은 서명을 확인한 뒤에만 설치합니다.
 
 <details>
 <summary><strong>이 맥에서 바뀌는 것</strong></summary>
@@ -164,6 +164,10 @@ move it to `/Applications`, open it (allow **Open Anyway** in System Settings �
 choose a language and click **Install** (two password prompts: admin install + certificate trust).
 
 ![Three install steps](docs/images/3-install-steps-en.png)
+
+### Updates
+
+New versions are checked once a day and announced. Updates are installed only after verifying the fork EdDSA signature. If an update ships a new blank-ad server, click **Reinstall** once to finish.
 
 ### How it works
 

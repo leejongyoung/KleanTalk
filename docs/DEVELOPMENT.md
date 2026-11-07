@@ -53,13 +53,13 @@ build.sh, scripts/make-dmg.sh
   - 그래서 Icon Composer 형식(`.icon`)을 actool로 컴파일하고, 유리·반사·그림자를 끕니다.
   - SDK를 낮추면 아이콘은 괜찮아지지만, 버튼 등이 macOS 26 스타일이 아니게 됩니다.
 
-## 업데이트와 배포 (fork: 자동 업데이트 꺼짐, #1)
+## 업데이트와 배포 (fork 서명 키로 동작)
 
 - **앱:**
-  - Sparkle 2.10.0을 `Contents/Frameworks`에 넣습니다(`build.sh`가 받아서 SHA-256 확인). 프레임워크는 링크되어 있지만 피드(`SUFeedURL`)가 없어 동작하지 않습니다.
-  - fork용 EdDSA 키쌍을 만들면 `Info.plist`에 `SUFeedURL`·`SUPublicEDKey`를 되살리고, 메뉴·상태 화면의 비활성화 분기를 걷어냅니다.
-- **서명 키 (후속):** `vendor/Sparkle-2.10.0/bin/generate_keys --account kleantalk`으로 fork용 키쌍을 만듭니다. **비공개 키를 잃어버리면 fork 업데이트를 서명할 수 없으므로 안전한 곳에 백업하세요.**
-- **배포:** `./scripts/release.sh <버전> <노트 파일>` 한 번으로 버전 올리기, DMG와 zip, 커밋·태그·push, GitHub Release까지 끝냅니다. 키쌍이 생기기 전까지 appcast·서명은 건너뜁니다.
+  - Sparkle 2.10.0을 `Contents/Frameworks`에 넣습니다(`build.sh`가 받아서 SHA-256 확인).
+  - `SUFeedURL`은 fork 릴리스의 appcast, `SUPublicEDKey`는 fork EdDSA 키입니다. 하루 한 번 확인합니다.
+- **서명 키:** 비공개 키는 `kleantalk` 계정으로 로그인 키체인 + 별도 백업에 있습니다. **잃어버리면 fork 업데이트를 서명할 수 없으므로 꼭 백업하세요.**
+- **배포:** `./scripts/release.sh <버전> <노트 파일>` 한 번으로 버전 올리기, DMG와 zip, 서명, appcast, 커밋·태그·push, GitHub Release까지 끝냅니다. 서명에는 키체인의 키를 쓰므로 `KLEANTALK_SPARKLE_KEY=1`을 붙여 실행합니다.
 - **서버도 바뀐 경우:** 설치된 서버와 앱 안의 서버가 다르면(버전 번호), 상태 화면에 '업데이트를 마치려면 다시 설치를 누르세요'와 **다시 설치** 버튼이 나옵니다. 다시 설치할 때 인증서는 그대로 쓰므로 암호는 한 번만 묻습니다.
 - **개발용 시험:**
   - `KLEANTALK_BUILD_NUMBER=99 ./build.sh`: 빌드 번호를 바꿔 빌드합니다.

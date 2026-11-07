@@ -1,13 +1,13 @@
 #!/bin/zsh
 # 새 버전 배포: ./scripts/release.sh <버전> <릴리스 노트 파일>
 #   예) ./scripts/release.sh 1.4 notes.md
-# 하는 일 (fork, #1)
+# 하는 일 (fork)
 #  1. Info.plist 버전을 올린다 (빌드 번호는 1 증가)
-#  2. DMG(처음 받는 사람용)와 zip(나중에 자동 업데이트를 살릴 때 쓸 것)을 만든다
-#  3. fork용 Sparkle 키쌍이 생기기 전까지는 서명·appcast 생성을 건너뛴다 (아래 참고)
-#  4. 커밋·태그·push 후 GitHub Release에 DMG를 올린다
-# fork에는 업데이트 피드(SUFeedURL)가 없다. fork용 EdDSA 키쌍을 만들어 SUPublicEDKey와
-# SUFeedURL을 되살리기 전까지 자동 업데이트는 동작하지 않으며, release.sh도 서명 단계를 건너뛴다.
+#  2. DMG(처음 받는 사람용)와 zip(자동 업데이트용)을 만든다
+#  3. 키체인의 fork EdDSA 키로 서명하고 appcast.xml을 만든다
+#  4. 커밋·태그·push 후 GitHub Release에 DMG, zip, appcast.xml을 올린다
+# 서명에는 로그인 키체인의 'kleantalk' 키를 쓰므로 GUI 세션에서 실행한다.
+# 키가 없으면 서명·appcast를 건너뛴다 (KLEANTALK_SPARKLE_KEY=1로 강제).
 set -euo pipefail
 cd "${0:A:h}/.."
 
@@ -26,8 +26,8 @@ BUILD=$(( $(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' Info.plist) + 1 
 ZIP="build/KleanTalk-$VERSION.zip"
 ditto -c -k --sequesterRsrc --keepParent build/KleanTalk.app "$ZIP"
 
-# fork용 Sparkle 키쌍이 없으면 서명·appcast를 건너뛴다 (KLEANTALK_SPARKLE_KEY=1로 강제).
-# 키쌍을 만들면 Info.plist에 SUFeedURL·SUPublicEDKey를 되살리고 이 분기를 지운다 (#1 후속).
+# 키체인의 fork EdDSA 키로 서명한다. 키가 없으면 서명·appcast를 건너뛴다.
+# 서명하려면 KLEANTALK_SPARKLE_KEY=1을 붙여 실행한다 (GUI 세션, 키체인 접근 필요).
 APPCAST_ARGS=()
 if [[ -n ${KLEANTALK_SPARKLE_KEY:-} ]]; then
   # 서명: sparkle:edSignature="..." length="..."

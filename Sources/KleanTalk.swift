@@ -7,7 +7,7 @@ import SwiftUI
 // 설치하면 (1) /etc/hosts로 카카오 광고 주소를 막고 (2) 광고 요청에 빈 광고를 돌려주는 작은 서버(AdServer/)를
 // 이 맥에 띄운다. 켜고 끄는 설정은 없고, 설치하면 작동하고 제거하면 모두 원래대로 돌아간다.
 // 로그인 시 --background 인자로 창 없이 실행돼, 설정이 풀렸을 때(macOS 업데이트로 hosts 초기화 등)만 창을 띄운다.
-// 새 버전은 GitHub Releases에서 DMG로 받는다 (fork에 자동 업데이트 없음, #1). 업데이트에 새 서버가 들어 있으면 '다시 설치'로 마무리한다.
+// 새 버전은 Sparkle로 받는다 (fork 서명 키로 확인, 하루 한 번). 업데이트에 새 서버가 들어 있으면 '다시 설치'로 마무리한다.
 
 let isBackgroundLaunch = CommandLine.arguments.contains("--background")
 
@@ -615,7 +615,7 @@ struct StatusView: View {
                         Text("\(model.version) · \(t.upToDate)").foregroundStyle(.secondary)
                     case .unknown:
                         Text(model.version).foregroundStyle(.secondary)
-                        // fork에는 업데이트 피드가 없다(SUFeedURL 미포함, #1). 있으면 Sparkle이 .upToDate/.available으로 바꾼다.
+                        // 피드가 없으면(SUFeedURL 미포함) "자동 업데이트 없음"으로 보인다.
                         if Bundle.main.infoDictionary?["SUFeedURL"] == nil {
                             Text(t.noAutoUpdate).font(.caption).foregroundStyle(.secondary)
                         }
@@ -913,7 +913,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, SPUU
         let appMenu = NSMenu()
         let updateItem = NSMenuItem(title: t.checkUpdates, action: #selector(checkForUpdates(_:)), keyEquivalent: "")
         updateItem.target = self
-        // fork에는 업데이트 피드가 없다(#1). 피드 없이 확인을 누르면 Sparkle 오류만 뜨므로 비활성화한다.
+        // 피드가 없으면 확인을 눌러도 Sparkle 오류만 뜨므로 비활성화한다.
         updateItem.isEnabled = updater.updater.canCheckForUpdates
         appMenu.addItem(updateItem)
         appMenu.addItem(withTitle: t.reportBug + "…", action: #selector(reportBug(_:)), keyEquivalent: "").target = self
