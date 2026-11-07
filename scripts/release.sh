@@ -64,7 +64,7 @@ fi
 
 git commit -q -am "버전 $VERSION"
 git tag "v$VERSION"
-git push -q origin main "v$VERSION"
+git push -q origin HEAD:work "v$VERSION"
 gh release create "v$VERSION" build/KleanTalk.dmg "$ZIP" ${APPCAST_ARGS[@]:-} \
   --repo "$REPO" --title "KleanTalk $VERSION" --notes-file "$NOTES" --latest
 echo "배포했습니다: https://github.com/$REPO/releases/tag/v$VERSION"
