@@ -15,6 +15,12 @@ upstream(`showmeyourway-sketch/KleanTalk`)의 fork입니다. 분기점: v1.11 (`
 - upstream 릴리스를 주기적으로 확인하고, 보안·버그 수정은 선별해서 가져옵니다.
 - 가져올 때는 upstream 기본 브랜치 대상이 아니라 fork `main`에 직접 머지하는 동기화 PR을 엽니다. fork 고유 변경(자동 업데이트 제거 등)과 충돌하면 fork 동작을 우선합니다.
 
+## 알려진 문제 (upstream 이슈 대응)
+
+- upstream #1(다른 계정 광고 복귀) → fork #11로 가져와 시스템 로그인 에이전트로 해결.
+- upstream #2(working인데 광고 복귀) → fork #12. `diagnose()`가 차단 3종 전체를 판정(`ok`·`blocked`·`NOT-REDIRECTED`·`UNBLOCKED`)하므로, 제보의 `hosts:` 한 줄이면 hosts 초기화와 신규 엔드포인트 우회를 가릴 수 있음.
+- upstream #3(원격연결 불가) → 제보자 자가 해결 + 코드상 원격 서비스 접점 없음. 조치 불필요, README 문제 해결에 명시.
+
 ## 라벨 운용
 
 - `security`: 신뢰 모델·권한·인증서·업데이트 서명 관련
