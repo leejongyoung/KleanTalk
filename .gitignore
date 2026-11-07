@@ -1,8 +1,0 @@
-build
-.DS_Store
-*.pem
-*.der
-*.p12
-vendor/
-# build.sh가 만드는 무결성 해시 (빌드 입력이므로 커밋하지 않음, #2)
-Sources/ScriptHashes.swift
