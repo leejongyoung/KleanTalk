@@ -23,6 +23,7 @@ struct Strings {
     let adminPrompt: String, missingFiles: String, scriptTampered: String, trustCanceled: String, trustFailed: String
     let checkUpdates: String, serverOutdated: String, version: String, upToDate: String, updateTo: String, noAutoUpdate: String
     let reportBug: String, bugTitle: String, bugBody: String, copyInfo: String, copiedInfo: String, infoTitle: String
+    let bugPreviewTitle: String, bugPreviewNote: String, openIssue: String
     let quit: String, edit: String, cut: String, copy: String, paste: String, selectAll: String, window: String, close: String
 
     static let ko = Strings(
@@ -45,6 +46,7 @@ struct Strings {
         reportBug: "버그 신고", bugTitle: "[버그] ",
         bugBody: "### 무슨 일이 있었나요?\n\n\n### 어떻게 하면 다시 생기나요?\n1. \n\n### 환경 (자동으로 채움)\n",
         copyInfo: "정보 복사", copiedInfo: "복사했습니다", infoTitle: "KleanTalk 진단 정보",
+        bugPreviewTitle: "이슈 열기 전 확인", bugPreviewNote: "이 내용이 공개 이슈에 올라갑니다. 민감한 부분은 지우고 여세요.", openIssue: "이슈 열기",
         quit: "KleanTalk 종료", edit: "편집", cut: "잘라내기", copy: "복사", paste: "붙여넣기", selectAll: "모두 선택",
         window: "윈도우", close: "닫기")
 
@@ -69,6 +71,7 @@ struct Strings {
         reportBug: "Report a Bug", bugTitle: "[Bug] ",
         bugBody: "### What happened?\n\n\n### How can we reproduce it?\n1. \n\n### Environment (filled in automatically)\n",
         copyInfo: "Copy Info", copiedInfo: "Copied", infoTitle: "KleanTalk diagnostic info",
+        bugPreviewTitle: "Review before opening", bugPreviewNote: "This goes to a public issue. Remove anything sensitive first.", openIssue: "Open issue",
         quit: "Quit KleanTalk", edit: "Edit", cut: "Cut", copy: "Copy", paste: "Paste", selectAll: "Select All",
         window: "Window", close: "Close")
 }
@@ -286,6 +289,9 @@ final class AppModel: ObservableObject {
     @Published var serverOutdated = false
     /// '정보 복사'를 누른 직후 잠깐 '복사했습니다'로 보여 준다
     @Published var copiedInfo = false
+    /// 버그 신고 미리보기: 전송 전에 본문을 확인·편집한다 (#6)
+    @Published var showBugPreview = false
+    @Published var bugDraft = ""
     /// Sparkle로 확인한 새 버전. 확인 전이거나 확인하지 못하면 unknown.
     enum Update: Equatable { case unknown, upToDate, available(String) }
     @Published var update = Update.unknown
@@ -369,11 +375,21 @@ final class AppModel: ObservableObject {
     func reportBug() {
         Task {
             let checks = AdServer.installed && state != .working ? await AdServer.diagnose() : []
-            var c = URLComponents(string: Self.issueNewURL)!
-            let body = t.bugBody + environment(checks: checks).joined(separator: "\n")
-            c.queryItems = [.init(name: "labels", value: "bug"), .init(name: "title", value: t.bugTitle), .init(name: "body", value: body)]
-            if let url = c.url { NSWorkspace.shared.open(url) }
+            bugDraft = maskHome(t.bugBody + environment(checks: checks).joined(separator: "\n"))
+            showBugPreview = true
         }
+    }
+
+    /// 미리보기에서 [이슈 열기]를 눌렀을 때. 수정된 본문 그대로 새 이슈 화면을 연다.
+    func openBugReport() {
+        var c = URLComponents(string: Self.issueNewURL)!
+        c.queryItems = [.init(name: "labels", value: "bug"), .init(name: "title", value: t.bugTitle), .init(name: "body", value: bugDraft)]
+        if let url = c.url { NSWorkspace.shared.open(url) }
+    }
+
+    /// 홈 디렉터리 경로를 ~로 바꿔 공개 이슈·복사에 실수로 들어가지 않게 한다 (#6).
+    private func maskHome(_ s: String) -> String {
+        s.replacingOccurrences(of: FileManager.default.homeDirectoryForCurrentUser.path, with: "~")
     }
 
     /// 버그 신고와 같은 내용(환경 + 단계별 확인 결과)을 클립보드에 복사한다.
@@ -381,7 +397,7 @@ final class AppModel: ObservableObject {
     func copyInfo() {
         Task {
             let checks = AdServer.installed ? await AdServer.diagnose() : []
-            let text = ([t.infoTitle] + environment(checks: checks)).joined(separator: "\n")
+            let text = maskHome(([t.infoTitle] + environment(checks: checks)).joined(separator: "\n"))
             NSPasteboard.general.clearContents()
             NSPasteboard.general.setString(text, forType: .string)
             copiedInfo = true
@@ -598,6 +614,33 @@ struct StatusView: View {
             .disabled(model.busy)
         }
         .task { await model.check() }
+        .sheet(isPresented: $model.showBugPreview) { BugPreviewView(model: model) }
+    }
+}
+
+/// 버그 신고 전송 전 확인·편집 화면. 공개 이슈에 올라갈 본문을 미리 보여 준다 (#6).
+struct BugPreviewView: View {
+    @ObservedObject var model: AppModel
+    var body: some View {
+        let t = model.t
+        VStack(alignment: .leading, spacing: 12) {
+            Text(t.bugPreviewTitle).font(.headline)
+            TextEditor(text: $model.bugDraft)
+                .font(.body)
+                .frame(minHeight: 220)
+                .border(Color.secondary.opacity(0.3))
+            Text(t.bugPreviewNote).font(.caption).foregroundStyle(.secondary)
+            HStack {
+                Spacer()
+                Button(t.cancel) { model.showBugPreview = false }
+                    .keyboardShortcut(.cancelAction)
+                Button(t.openIssue) { model.showBugPreview = false; model.openBugReport() }
+                    .buttonStyle(.borderedProminent)
+                    .keyboardShortcut(.defaultAction)
+            }
+        }
+        .padding(16)
+        .frame(width: 460, height: 380)
     }
 }
 

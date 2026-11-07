@@ -88,19 +88,36 @@ chown root:wheel "$PLIST"; chmod 644 "$PLIST"
 launchctl bootstrap system "$PLIST"
 
 # 4. hosts: serv.ds.kakao.com만 서버 전용 주소로. KleanTalk 블록이 없으면 만든다.
+# 매번 타임스탬프 백업을 남기고(최대 5개), 같은 디렉터리 임시 파일+rename으로 원자 교체한다 (#4).
+TS=$(date +%Y%m%d-%H%M%S)
+cp -p /etc/hosts "/etc/hosts.kleantalk.$TS.bak"
+ls -t /etc/hosts.kleantalk.*.bak 2>/dev/null | tail -n +6 | xargs rm -f --
 if ! grep -q '^# >>> KakaoAdBlock' /etc/hosts; then
-  [[ -f /etc/hosts.kakaoadblock.bak ]] || cp /etc/hosts /etc/hosts.kakaoadblock.bak
   printf '\n# >>> KakaoAdBlock (managed by KleanTalk)\n0.0.0.0 display.ad.daum.net\n:: display.ad.daum.net\n0.0.0.0 analytics.ad.daum.net\n:: analytics.ad.daum.net\n0.0.0.0 %s\n:: %s\n# <<< KakaoAdBlock\n' $HOST $HOST >> /etc/hosts
 fi
-# 블록 안에서 serv.ds.kakao.com의 IPv4만 서버 전용 주소로, 나머지(다른 주소, 모든 IPv6)는 막음(0.0.0.0, ::)으로 맞춘다.
+# 블록 안에서 관리 대상(serv.ds.kakao.com, daum 광고 2종)만 정리하고, 그 밖의 행·주석·별칭은 그대로 둔다.
 # IPv6가 막혀 있으면 카카오톡은 곧바로 IPv4(전용 주소)로 연결한다.
+TMP_HOSTS=$(mktemp /etc/hosts.kleantalk.XXXXXX)
+trap 'rm -f "$TMP_HOSTS"; rm -rf "${TMP:?}"' EXIT
 awk -v host="$HOST" -v addr="$ADDR" '
   /^# >>> KakaoAdBlock/ { inside = 1; print; next }
   /^# <<< KakaoAdBlock/ { inside = 0; print; next }
-  inside && NF >= 2 && $1 ~ /^[0-9.]+$/ { print ($2 == host ? addr " " : "0.0.0.0 ") $2; next }
-  inside && NF >= 2 && $1 ~ /:/ { print ":: " $2; next }
+  !inside { print; next }
+  NF < 2 { print; next }
+  $1 ~ /^[0-9.]+$/ {
+    if ($2 == host) { sub(/^[0-9.]+/, addr); print; next }
+    if ($2 == "display.ad.daum.net" || $2 == "analytics.ad.daum.net") { sub(/^[0-9.]+/, "0.0.0.0"); print; next }
+    print; next
+  }
+  $1 ~ /:/ {
+    if ($2 == host || $2 == "display.ad.daum.net" || $2 == "analytics.ad.daum.net") { sub(/^[^[:space:]]+/, "::"); print; next }
+    print; next
+  }
   { print }
-' /etc/hosts > /etc/hosts.kleantalk.tmp && cat /etc/hosts.kleantalk.tmp > /etc/hosts && rm -f /etc/hosts.kleantalk.tmp
+' /etc/hosts > "$TMP_HOSTS"
+chmod 644 "$TMP_HOSTS"; chown root:wheel "$TMP_HOSTS"
+mv -f "$TMP_HOSTS" /etc/hosts
+trap - EXIT
 dscacheutil -flushcache; killall mDNSResponder 2>/dev/null || true
 
 echo "설치했습니다. 터미널로 설치했다면 마지막으로 인증서 신뢰를 등록하세요 (sudo 없이, macOS 확인 창이 뜸):"

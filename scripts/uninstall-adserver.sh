@@ -29,12 +29,27 @@ rm -rf "${DIR:?}"
 rmdir "/Library/Application Support/KleanTalk" 2>/dev/null || true
 /sbin/ifconfig lo0 -alias $ADDR 2>/dev/null || true
 
-# hosts에서 광고 차단 블록(# >>> KakaoAdBlock ... # <<< KakaoAdBlock)을 통째로 뺀다
-awk '
-  /^# >>> KakaoAdBlock/ { inside = 1; next }
-  inside && /^# <<< KakaoAdBlock/ { inside = 0; next }
-  !inside { print }
-' /etc/hosts > /etc/hosts.kleantalk.tmp && cat /etc/hosts.kleantalk.tmp > /etc/hosts && rm -f /etc/hosts.kleantalk.tmp
+# hosts에서 관리 대상 행만 지운다. 블록 안에 사용자가 넣은 행이 있으면 표식을 남기고 보존한다 (#4).
+# 제거 전 타임스탬프 백업을 남긴다 (최대 5개).
+TS=$(date +%Y%m%d-%H%M%S)
+cp -p /etc/hosts "/etc/hosts.kleantalk.$TS.bak"
+ls -t /etc/hosts.kleantalk.*.bak 2>/dev/null | tail -n +6 | xargs rm -f --
+TMP_HOSTS=$(mktemp /etc/hosts.kleantalk.XXXXXX)
+trap 'rm -f "$TMP_HOSTS"' EXIT
+awk -v host="serv.ds.kakao.com" '
+  /^# >>> KakaoAdBlock/ { inside = 1; buf = ""; kept = 0; next }
+  inside && /^# <<< KakaoAdBlock/ {
+    inside = 0
+    if (kept) { print "# >>> KakaoAdBlock (custom lines kept)"; printf "%s", buf; print "# <<< KakaoAdBlock" }
+    next
+  }
+  !inside { print; next }
+  NF >= 2 && ($2 == host || $2 == "display.ad.daum.net" || $2 == "analytics.ad.daum.net") { next }
+  { buf = buf $0 "\n"; kept = 1; next }
+' /etc/hosts > "$TMP_HOSTS"
+chmod 644 "$TMP_HOSTS"; chown root:wheel "$TMP_HOSTS"
+mv -f "$TMP_HOSTS" /etc/hosts
+trap - EXIT
 dscacheutil -flushcache; killall mDNSResponder 2>/dev/null || true
 
 echo "KleanTalk의 광고 차단과 빈 광고 서버를 모두 지웠습니다."
