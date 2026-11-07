@@ -40,5 +40,13 @@
 	<true/>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
+	<key>SUFeedURL</key>
+	<string>https://github.com/leejongyoung/KleanTalk/releases/latest/download/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>lbYoLVJ1CXwgHS1juoK0CO7XTURSen4ysqA4yZO6li8=</string>
+	<key>SUScheduledCheckInterval</key>
+	<integer>86400</integer>
 </dict>
 </plist>
