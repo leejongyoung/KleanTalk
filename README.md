@@ -1,117 +1,117 @@
 # KleanTalk
 
-맥용 카카오톡의 광고 자리를 **카카오톡과 같은 색의 빈 공간**으로 바꾸는 macOS 앱입니다.
-카카오톡 앱 파일을 고치거나 다시 서명하지 않고, 대화 내용과 설정에도 손대지 않습니다.
+[![GitHub release](https://img.shields.io/github/v/release/leejongyoung/KleanTalk?label=%EB%B2%84%EC%A0%84)](https://github.com/leejongyoung/KleanTalk/releases/latest)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![macOS 12+](https://img.shields.io/badge/macOS-12%2B-blue)](https://github.com/leejongyoung/KleanTalk/releases/latest)
+
+맥 카카오톡 하단 광고 자리를 **카톡과 같은 색의 빈 공간**으로 바꿉니다.
+카톡 앱을 고치지 않고, 대화·설정에도 손대지 않습니다.
 
 ![KleanTalk](docs/images/1-hero-ko.png)
 
-![설치는 세 단계](docs/images/3-install-steps-ko.png)
+> 카카오와 관계없는 비공식 개인 프로젝트입니다. 카톡 이용약관과 맞지 않을 수 있으니 확인하고 사용하세요.
 
-> 카카오와 관계없는 비공식 개인 프로젝트입니다. 사용에 따른 책임은 사용자에게 있습니다.
-> 카카오톡 이용약관과 맞지 않을 수 있으니 확인하고 사용하세요.
-
-## 어떻게 동작하나요
-
-맥 카카오톡은 광고를 받지 못하면 그 자리에 카카오 홍보 배너를 대신 띄웁니다.
-그래서 광고 주소를 막기만 해서는 광고 자리가 비지 않습니다. KleanTalk은 이렇게 합니다.
-
-1. `/etc/hosts`에서 카카오 광고 주소(`display.ad.daum.net`, `analytics.ad.daum.net`)를 막습니다.
-2. 카카오톡이 광고를 받아 오는 주소(`serv.ds.kakao.com`)는 이 맥 안의 작은 서버로 돌립니다.
-3. 그 서버는 진짜 광고 서버와 같은 형식으로 **빈 광고**를 돌려줍니다.
-   - 광고 내용은 카카오톡 창과 같은 색으로 칠한 빈 화면입니다.
-   - 카카오톡은 이를 정상 광고로 받아들입니다. 그래서 홍보 배너가 나오지 않고, 광고 자리는 빈 공간으로 보입니다.
-4. 진짜 광고 서버에는 연결하지 않으므로 광고 이미지, 추적 코드, 노출 집계도 오가지 않습니다.
+- [설치](#설치) · [동작 방식](#어떻게-동작하나요) · [문제 해결](#문제-해결) · [제거](#제거) · [English](#english)
 
 ## 설치
 
-1. [KleanTalk.dmg 받기](https://github.com/leejongyoung/KleanTalk/releases/latest/download/KleanTalk.dmg) 후 `KleanTalk.app`을 응용 프로그램 폴더로 옮깁니다. 가급적 `/Applications`(관리자 소유)에 두세요. `~/Applications`처럼 사용자 소유 폴더에서는 앱이 번들 변조를 매번 확인하지만, 관리자 소유가 더 안전합니다. 설치 과정에서 서버 파일의 검역(격리) 표시는 자동으로 제거됩니다. Homebrew가 있으면 터미널에서 `brew tap leejongyoung/kleantalk && brew install --cask kleantalk`로도 설치됩니다.
-2. 앱을 엽니다. 처음 열 때 *"Apple은 악성 코드가 없는지 확인할 수 없습니다"* 경고가 뜨면 다음과 같이 합니다.
-   - 이 앱은 Apple 공증을 받지 않아 이 경고가 뜹니다.
-   - **시스템 설정 → 개인정보 보호 및 보안**의 아래쪽에서 **그래도 열기**를 누르세요.
-3. 언어(한국어 / English)를 고르고 **설치**를 누릅니다. 암호를 **두 번** 묻습니다.
-   - 첫 번째: 관리자 권한으로 서버와 hosts를 설치합니다.
-   - 두 번째: macOS가 인증서 신뢰 설정을 확인합니다.
-4. 설치가 끝나면 카카오톡이 자동으로 다시 시작되고, 광고 자리가 빈 공간으로 바뀝니다.
+**방법 A — Homebrew (권장)**
 
-설치 뒤에는 따로 켤 필요가 없습니다. KleanTalk은 로그인할 때 창 없이 실행돼 설정이 풀리지 않았는지 가끔 확인합니다.
-macOS 업데이트로 hosts가 초기화되는 경우 등에 확인합니다. 문제가 생기면 창을 띄워 **다시 설치**를 권합니다.
+```sh
+brew tap leejongyoung/kleantalk && brew install --cask kleantalk
+```
 
-## 업데이트
+**방법 B — DMG**
 
-이 fork에는 자동 업데이트가 없습니다. 새 버전은 GitHub Releases 공지로 확인하고, 새 DMG를 받아 다시 설치하세요.
-(upstream의 Sparkle 자동 업데이트는 서명 키가 upstream에 있어 fork에서 뺐습니다. 자세한 사정은 `FORK.md`.)
-- 새 버전에 바뀐 서버가 들어 있으면 **다시 설치**를 한 번 눌러 마무리합니다. 관리자 암호를 묻습니다.
+1. [KleanTalk.dmg 받기](https://github.com/leejongyoung/KleanTalk/releases/latest/download/KleanTalk.dmg) → `KleanTalk.app`을 `/Applications`에 옮깁니다.
+2. 첫 실행에 *"악성 코드가 없음을 확인할 수 없습니다"* 경고가 뜨면 **시스템 설정 → 개인정보 보호 및 보안 → 그래도 열기** 후 다시 실행합니다. (Apple 공증이 없는 개인 앱이라 뜨는 경고입니다.)
+3. 언어를 고르고 **설치**를 누릅니다. 암호를 두 번 묻습니다 — 관리자 설치 1번, 인증서 신뢰 확인 1번.
 
-## 제거
+![설치는 세 단계](docs/images/3-install-steps-ko.png)
 
-KleanTalk을 열고 **제거…**를 누릅니다. 다음을 모두 되돌리고 앱을 휴지통으로 옮깁니다.
-- 서버
-- 인증서 신뢰
-- hosts 설정
-- 로그인 시 실행
+설치가 끝나면 카카오톡이 자동으로 다시 시작되고 광고 자리가 빈 공간으로 바뀝니다.
+이후엔 로그인할 때 창 없이 설정만 확인하고, 풀렸을 때만 창을 띄워 **다시 설치**를 권합니다.
 
-## 버그 신고
+> `~/Applications`처럼 사용자 소유 폴더도 되지만, `/Applications`(관리자 소유)이 더 안전합니다.
+> 다른 macOS 계정에서도 쓰려면 `/Applications`에 두세요 — 계정마다 첫 로그인 때 신뢰 등록 안내가 뜹니다.
 
-KleanTalk 메뉴의 **버그 신고…**(1.4부터)를 누르면 GitHub 이슈 쓰기 화면이 열립니다. 앱 버전, macOS, 칩, 카카오톡 버전, 상태가 미리 채워집니다. 직접 쓰려면 [이슈 쓰기](https://github.com/leejongyoung/KleanTalk/issues/new?template=bug_report.md)를 누르세요. GitHub 계정이 필요합니다. 열기 전에 본문을 확인·편집할 수 있으며, 홈 디렉터리 경로는 `~`로 가려집니다.
+## 어떻게 동작하나요
+
+카카오톡은 광고를 못 받으면 홍보 배너를 대신 띄웁니다. 그래서 막기만 해선 안 되고,
+광고 요청을 **성공**시키되 내용만 비웁니다.
+
+```mermaid
+flowchart LR
+    K[카카오톡 광고 요청] --> H["/etc/hosts\nserv.ds.kakao.com → 127.84.11.1"]
+    H --> S[빈 광고 서버\n진짜와 같은 형식의 빈 광고]
+    S -->|X-KleanTalk: 1| K
+    R[진짜 광고 서버] -.->|연결 안 함| K
+```
+
+1. `/etc/hosts`에서 카카오·다음 광고 주소를 막습니다.
+2. `serv.ds.kakao.com`만 이 맥 안의 작은 서버(`127.84.11.1:443`)로 돌립니다.
+3. 서버가 카톡 창과 같은 색의 빈 화면을 돌려주고, 카카오톡은 정상 광고로 받아들입니다.
+4. 진짜 광고 서버에는 연결하지 않으니 광고 이미지·추적 코드·노출 집계가 오가지 않습니다.
 
 ## 이 맥에서 바뀌는 것
 
 | 항목 | 위치 | 내용 |
 |---|---|---|
-| hosts | `/etc/hosts` | `# >>> KakaoAdBlock` … `# <<< KakaoAdBlock` 블록 (광고 주소 차단, `serv.ds.kakao.com` → `127.84.11.1`) |
-| 빈 광고 서버 | `/Library/Application Support/KleanTalk/AdServer/` | 서버 실행 파일, 인증서, 키(관리자만 읽기 가능) |
-| 백그라운드 서비스 | `/Library/LaunchDaemons/com.myungchul.kleantalk.adserver.plist` | 서버를 항상 실행 |
-| 루프백 주소 | `lo0`에 `127.84.11.1` | 서버 전용 주소. 서버가 시작할 때 붙입니다 |
-| 인증서 신뢰 | 사용자 신뢰 설정 | `serv.ds.kakao.com`의 HTTPS 서버 인증에만 |
-| 로그인 시 실행 | `~/Library/LaunchAgents/com.myungchul.kleantalk.plist` | 상태 확인용 |
+| hosts | `/etc/hosts` | `# >>> KakaoAdBlock` 블록 (광고 차단, `serv.ds.kakao.com` → `127.84.11.1`) |
+| 빈 광고 서버 | `/Library/Application Support/KleanTalk/AdServer/` | 실행 파일·인증서·키 (키는 관리자만 읽기 가능) |
+| 백그라운드 서비스 | `/Library/LaunchDaemons/com.myungchul.kleantalk.adserver.plist` | 서버 상시 실행 |
+| 루프백 주소 | `lo0`의 `127.84.11.1` | 서버 전용 주소 |
+| 인증서 신뢰 | 사용자 신뢰 설정 | `serv.ds.kakao.com`의 HTTPS에만 |
+| 로그인 시 실행 | `/Library/LaunchAgents/com.myungchul.kleantalk.plist` | 모든 계정 상태 확인용 |
 
-### 보안에 관해
+### 보안
 
-- **인증서:** `serv.ds.kakao.com` 한 이름에만 쓰는 일반 인증서입니다. 인증 기관(CA)이 아니라서 다른 인증서를 만들 수 없습니다.
-- **신뢰 범위:** 시스템에는 이 사용자 계정에서, 그 이름의 HTTPS에만 신뢰하도록 등록합니다. 키가 새어 나가도 다른 사이트를 흉내 낼 수 없습니다.
-- **키:** 관리자(root)만 읽을 수 있는 폴더에 있습니다.
-- **서버 권한:** 시작할 때만 관리자 권한을 쓰고, 포트를 연 뒤에는 권한 없는 계정(`nobody`)으로 내려갑니다.
-- **접속 범위:** 이 맥 안의 전용 주소(`127.84.11.1:443`)에서만 받으므로 다른 기기에서 접속할 수 없습니다. `127.0.0.1:443`을 쓰는 개발 도구와도 부딪치지 않습니다.
-- **다른 앱에 주는 영향:** hosts는 맥 전체에 적용됩니다. 그래서 브라우저에서도 위 카카오·다음 광고 주소가 막힙니다. iCloud 같은 다른 서비스는 영향을 받지 않습니다.
-
-## 요구 사항과 한계
-
-- macOS 12(Monterey) 이상, Apple Silicon과 Intel 맥 모두. 맥용 카카오톡과 같은 기준입니다. 맥용 카카오톡 26.9.0에서 확인했습니다.
-- **카카오가 광고 방식을 바꾸면 동작하지 않을 수 있습니다.** 광고 주소, 응답 형식, 광고 HTML과 앱이 주고받는 신호가 바뀌는 경우입니다.
-- **빈 광고 색:** 다크 모드에서 실측한 색입니다. 라이트 모드 색은 아직 실측하지 않았습니다.
-- **인증서 기한:** 365일입니다. 기한이 다가오면 상태가 "작동하지 않음"으로 바뀝니다. 그때 **다시 설치**를 누르면 새로 만듭니다.
+- 인증서는 `serv.ds.kakao.com` 전용 일반 인증서(CA 아님). 키가 새도 다른 사이트를 흉내 낼 수 없습니다.
+- 키는 root만 읽고, 서버는 443을 연 뒤 `nobody` 권한으로 내려갑니다.
+- 전용 루프백 주소라 다른 기기·`127.0.0.1` 개발 도구와 부딪치지 않습니다.
+- 설치 패키지의 검역 표시는 설치할 때 자동으로 걷어냅니다.
+- hosts는 맥 전체에 적용돼 브라우저의 카카오·다음 광고 주소도 막힙니다. iCloud 등 다른 서비스는 영향 없습니다.
 
 ## 문제 해결
 
-- **광고가 다시 뜨면:** 앱을 열어 상태를 보세요. "작동하지 않음"이면 **다시 설치**를 누르세요. 상태가 "작동 중"인데 광고가 뜨면 터미널에서 `KleanTalk.app/Contents/MacOS/KleanTalk --diagnose`를 실행해 `hosts:` 줄을 확인하세요. `serv`가 `ok`가 아니면 hosts가 초기화된 것이니 다시 설치하세요. 전부 정상(`ok`·`blocked`)인데 광고가 뜨면 카카오가 광고 방식을 바꾼 것일 수 있으니, 광고 화면과 `--diagnose` 결과를 [이슈](https://github.com/leejongyoung/KleanTalk/issues/new?template=bug_report.md)에 올려 주세요.
-- **다른 macOS 계정에서 광고가 뜨면:** 계정마다 인증서 신뢰 등록이 한 번씩 필요합니다. 앱이 `/Applications`에 있으면 다른 계정 로그인 때 안내 창이 뜹니다. 안내대로 **다시 설치**를 누르세요.
-- **원격 연결·다른 앱 문제:** KleanTalk은 광고 주소·빈 광고 서버·인증서 신뢰만 건드립니다. 원격 관리·화면 공유·방화벽 설정은 바꾸지 않습니다.
-- **`kleantalk-adserver` 확인 불가 경고가 뜨면:** 브라우저로 받은 파일의 검역 표시가 서버 실행을 막은 것입니다. 1.11.2부터 설치할 때 자동으로 걷어내니, 구버전으로 설치했다면 최신 DMG로 **다시 설치**하세요. 경고창은 지우지 말고 닫아도 됩니다 (데몬이 뜨지 않은 상태라 광고 차단은 안 됩니다).
+| 증상 | 조치 |
+|---|---|
+| 광고가 다시 뜸 + 상태 "작동하지 않음" | **다시 설치**를 누르세요. |
+| 광고가 다시 뜸 + 상태 "작동 중" | 터미널에서 `KleanTalk.app/Contents/MacOS/KleanTalk --diagnose` 실행 → `hosts:` 줄 확인. `serv`가 `ok`가 아니면 hosts 초기화된 것이니 다시 설치. 전부 정상인데 광고가 뜨면 광고 화면 + `--diagnose` 결과를 [이슈](https://github.com/leejongyoung/KleanTalk/issues/new?template=bug_report.md)에 올려 주세요. |
+| 다른 계정에서 광고가 뜸 | 계정마다 신뢰 등록 1회 필요. `/Applications`에 있으면 로그인 때 안내가 뜹니다. |
+| `kleantalk-adserver` 확인 불가 경고 | 브라우저 DMG의 검역 표시 때문. 1.11.2부터 설치할 때 자동 제거되니 최신 DMG로 **다시 설치**하세요. |
+| 원격 연결·다른 앱 문제 | KleanTalk과 무관합니다 (원격 관리·화면 공유·방화벽을 건드리지 않음). |
+
+## 제거
+
+KleanTalk을 열고 **제거…**를 누릅니다. 서버·인증서 신뢰·hosts·로그인 항목을 모두 되돌리고 앱을 휴지통으로 옮깁니다.
+
+## 버그 신고
+
+메뉴의 **버그 신고…**를 누르면 앱 버전·macOS·칩·카톡 버전·상태가 미리 채워진 이슈 화면이 열립니다.
+열기 전에 본문을 확인·편집할 수 있고, 홈 디렉터리 경로는 `~`로 가려집니다. ([직접 쓰기](https://github.com/leejongyoung/KleanTalk/issues/new?template=bug_report.md), GitHub 계정 필요)
+
+## 요구 사항과 한계
+
+- macOS 12 이상, Apple Silicon·Intel. 카톡 26.9.0에서 확인.
+- 카카오가 광고 방식을 바꾸면 동작하지 않을 수 있습니다 (주소·응답 형식·신호 변경 시).
+- 빈 광고 색은 다크 모드 실측치, 인증서 기한은 365일입니다.
+- 이 fork에는 자동 업데이트가 없습니다. 새 버전은 Releases에서 DMG를 받아 다시 설치하세요. (자세한 사정은 [`FORK.md`](FORK.md))
 
 ## 소스에서 빌드
 
-```bash
-./build.sh                # build/KleanTalk.app
-./build.sh --install      # 빌드한 뒤 ~/Applications에 복사
+```sh
+./build.sh                # build/KleanTalk.app (Xcode 필요)
+./build.sh --install      # ~/Applications에 복사
 ./scripts/make-dmg.sh     # build/KleanTalk.dmg
-./scripts/release.sh 1.4 notes.md   # 새 버전 배포 (아래 설명)
 ```
 
-- 처음 빌드할 때 [Sparkle](https://sparkle-project.org) 2.10.0을 공식 릴리스에서 받아, SHA-256을 확인한 뒤 `vendor/`에 풉니다. (fork에 업데이트 피드가 없어도 앱 링크용으로 필요합니다.)
-- **새 버전 배포:** `scripts/release.sh`가 버전을 올리고 다음 일을 한 번에 합니다. fork용 Sparkle 키쌍이 생기기 전까지는 DMG+zip만 올리고 appcast는 만들지 않습니다.
-  - DMG와 zip을 만들고, 커밋·태그·push 후 GitHub Release에 올립니다.
-  - fork용 EdDSA 키쌍을 만들면 `Info.plist`에 `SUFeedURL`·`SUPublicEDKey`를 되살리고 자동 업데이트를 다시 켭니다 (#1 후속).
-
-- 빌드에는 Xcode가 필요합니다. macOS 12용 Intel 빌드에 쓰는 Swift 호환 라이브러리가 Command Line Tools에는 없습니다.
-- 아이콘은 미리 컴파일한 파일(`Icon/compiled/`)을 씁니다. 아이콘을 바꿀 때만 `./scripts/make-icon.sh`를 실행하세요(Xcode 26 이상 필요).
-- 터미널로 서버만 설치하거나 지울 수도 있습니다.
-
-```bash
-sudo ./scripts/install-adserver.sh      # 마지막에 안내하는 인증서 신뢰 명령을 sudo 없이 실행
-sudo ./scripts/uninstall-adserver.sh
+```sh
+sudo ./scripts/install-adserver.sh      # 서버만 설치 (인증서 신뢰는 안내대로 sudo 없이)
+sudo ./scripts/uninstall-adserver.sh    # 서버만 제거
 ```
 
-구조와 설계 이유는 [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)에 있습니다.
+구조와 설계 이유는 [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md)에 있습니다.
 
 ## License
 
@@ -119,28 +119,58 @@ sudo ./scripts/uninstall-adserver.sh
 
 ---
 
-## English
+<details>
+<summary><strong>English</strong></summary>
 
 ![KleanTalk](docs/images/1-hero-en.png)
 
-KleanTalk turns the ad slot in KakaoTalk for Mac into **empty space in KakaoTalk's own colors**. It doesn't patch or re-sign the KakaoTalk app, and doesn't touch your chats or settings.
+KleanTalk turns the ad slot in KakaoTalk for Mac into **empty space in KakaoTalk's own colors**.
+It doesn't patch or re-sign the KakaoTalk app, and doesn't touch your chats or settings.
 
-- **How it works:**
-  1. It blocks Kakao's ad domains in `/etc/hosts`.
-  2. It points `serv.ds.kakao.com` at a tiny local server on `127.84.11.1:443`.
-  3. That server answers ad requests with a well-formed *blank* ad. KakaoTalk accepts it as a real ad, so it doesn't fall back to its built-in promo banner.
-  4. Nothing is fetched from the real ad server.
-- **Requirements:** macOS 12 (Monterey) or later, the same as KakaoTalk for Mac, on Apple Silicon or Intel Macs.
-- **Install:** via Homebrew (`brew tap leejongyoung/kleantalk && brew install --cask kleantalk`) or DMG below.
-  1. Open the app and choose a language, then click **Install**. You'll enter your password twice: once for the administrator install, and once for macOS's certificate-trust confirmation.
-  2. Because the app isn't notarized, macOS may block the first launch. Allow it in **System Settings → Privacy & Security → Open Anyway**.
-- **Updates:** not enabled in this fork yet. New versions are announced as GitHub Releases — download the new DMG and reinstall. (Upstream auto-update via Sparkle was removed because its signing key belongs to upstream; see `FORK.md`.)
-- **Uninstall:** click **Uninstall…** in the app. It removes everything (server, certificate trust, hosts entries, login item) and moves the app to the Trash.
-- **Report a bug:** choose **Report a Bug…** in the app menu (1.4+) to open a GitHub issue with your app version, macOS, chip, KakaoTalk version, and status filled in, or [open one directly](https://github.com/leejongyoung/KleanTalk/issues/new?template=bug_report.md). Needs a GitHub account. You can review and edit the body before it opens, and home-directory paths are masked as `~`.
-- **Troubleshooting:** if ads return while status says working, run `KleanTalk.app/Contents/MacOS/KleanTalk --diagnose` and check the `hosts:` line. Other macOS accounts need their own one-time trust setup (keep the app in `/Applications` so they get prompted). Remote management/sharing settings are never touched. If macOS warns it cannot check `kleantalk-adserver`, reinstall from the latest DMG (quarantine flags are stripped automatically since 1.11.2).
-- **Security:**
-  - The certificate is a non-CA leaf for `serv.ds.kakao.com` only, trusted for that hostname's SSL server auth in your user trust settings.
-  - Its key is readable by root only.
-  - The server drops to `nobody` after binding and listens only on a dedicated loopback address.
+### Install
 
-This is an unofficial personal project, not affiliated with Kakao. Use at your own risk.
+```sh
+brew tap leejongyoung/kleantalk && brew install --cask kleantalk
+```
+
+Or [download KleanTalk.dmg](https://github.com/leejongyoung/KleanTalk/releases/latest/download/KleanTalk.dmg),
+move it to `/Applications`, open it (allow **Open Anyway** in System Settings → Privacy & Security),
+choose a language and click **Install** (two password prompts: admin install + certificate trust).
+
+![Three install steps](docs/images/3-install-steps-en.png)
+
+### How it works
+
+KakaoTalk shows a promo banner when ads fail to load, so KleanTalk makes ad requests
+*succeed* with empty content: ad domains are blocked in `/etc/hosts`,
+`serv.ds.kakao.com` points at a tiny local server (`127.84.11.1:443`) that answers
+with a well-formed blank ad. Nothing is fetched from the real ad server.
+
+### Uninstall
+
+Click **Uninstall…** in the app. It removes the server, certificate trust, hosts
+entries and login item, then moves the app to the Trash.
+
+### Report a bug
+
+Choose **Report a Bug…** in the app menu. The issue opens pre-filled (app version,
+macOS, chip, KakaoTalk version, status); review and edit it before it opens.
+Home-directory paths are masked as `~`.
+([Open directly](https://github.com/leejongyoung/KleanTalk/issues/new?template=bug_report.md), GitHub account needed)
+
+### Troubleshooting
+
+If ads return while status says working, run
+`KleanTalk.app/Contents/MacOS/KleanTalk --diagnose` and check the `hosts:` line.
+Other macOS accounts need their own one-time trust setup (keep the app in
+`/Applications`). Remote management/sharing settings are never touched.
+If macOS warns it cannot check `kleantalk-adserver`, reinstall from the latest DMG.
+
+### Security
+
+The certificate is a non-CA leaf for `serv.ds.kakao.com` only. Its key is readable
+by root only, and the server drops to `nobody` after binding a dedicated loopback address.
+
+*An unofficial personal project, not affiliated with Kakao. Use at your own risk.*
+
+</details>
