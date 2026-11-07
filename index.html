@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KleanTalk — 맥 카카오톡 광고 자리를 빈 공간으로</title>
+<meta name="description" content="맥 카카오톡 하단 광고 자리를 카카오톡과 같은 색의 빈 공간으로 바꾸는 무료 오픈소스 앱. 카톡을 고치지 않습니다.">
+<meta property="og:title" content="KleanTalk">
+<meta property="og:description" content="맥 카카오톡 광고 자리를 빈 공간으로 · Free MIT app that blanks the KakaoTalk for Mac ad slot">
+<meta property="og:image" content="img/1-hero-ko.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>">
+<style>
+  :root { --bg: #141416; --card: #1d1d20; --line: #2c2c30; --text: #f2f2f3; --sub: #a8a8ae; --yellow: #fae100; --brown: #3c1e1e; --blue: #0a84ff; }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", sans-serif; }
+  a { color: var(--blue); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+  header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; }
+  header .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--text); text-decoration: none; font-size: 20px; }
+  .lang button { background: none; border: 1px solid var(--line); color: var(--sub); border-radius: 999px; padding: 4px 12px; font: inherit; font-size: 14px; cursor: pointer; }
+  .lang button[aria-pressed="true"] { color: var(--text); border-color: var(--sub); }
+  .hero { text-align: center; padding: 48px 0 24px; }
+  h1 { font-size: clamp(40px, 7vw, 64px); margin: 12px 0 4px; letter-spacing: -0.02em; }
+  .tagline { font-size: clamp(20px, 3.2vw, 28px); font-weight: 600; margin: 0 0 12px; }
+  .meta { color: var(--sub); margin: 0 0 28px; }
+  .cta { display: inline-flex; align-items: center; gap: 8px; background: var(--yellow); color: var(--brown); font-weight: 700; text-decoration: none; padding: 14px 28px; border-radius: 999px; font-size: 18px; }
+  .cta-sub { display: block; margin-top: 12px; font-size: 14px; color: var(--sub); }
+  .count { display: table; margin: 18px auto; border: 1px solid var(--line); border-radius: 999px; padding: 3px 14px; font-size: 14px; }
+  .count[hidden] { display: none; }
+  figure { margin: 40px 0; }
+  figure img { width: 100%; height: auto; border-radius: 16px; border: 1px solid var(--line); display: block; }
+  h2 { font-size: 28px; margin: 64px 0 16px; letter-spacing: -0.01em; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; }
+  .card h3 { margin: 0 0 6px; font-size: 18px; }
+  .card p { margin: 0; color: var(--sub); font-size: 15px; }
+  ol.steps { padding-left: 22px; }
+  ol.steps li { margin: 6px 0; }
+  .note { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--yellow); border-radius: 0 12px 12px 0; padding: 14px 18px; color: var(--sub); font-size: 15px; }
+  code { background: #2a2a2e; border-radius: 6px; padding: 1px 6px; font-size: 0.92em; }
+  pre { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  footer { color: var(--sub); font-size: 14px; padding: 56px 0 40px; border-top: 1px solid var(--line); margin-top: 72px; }
+  [data-lang="en"] .ko, [data-lang="ko"] .en { display: none; }
+</style>
+</head>
+<body data-lang="ko">
+<div class="wrap">
+  <header>
+    <a class="brand" href="./">💬 KleanTalk</a>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-set="ko" aria-pressed="true">한국어</button>
+      <button type="button" data-set="en" aria-pressed="false">English</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>KleanTalk</h1>
+    <p class="tagline"><span class="ko">맥 카카오톡 광고 자리를 빈 공간으로</span><span class="en">Blank the KakaoTalk for Mac ad slot</span></p>
+    <p class="meta"><span class="ko">무료 · 오픈소스(MIT) · macOS 12 이상 · 카톡을 고치지 않음</span><span class="en">Free · Open source (MIT) · macOS 12+ · Never touches the KakaoTalk app</span></p>
+    <p class="count" id="count" hidden><span class="ko"><b class="n"></b>명이 받았어요</span><span class="en">Downloaded <b class="n"></b> times</span></p>
+    <a class="cta" href="https://github.com/leejongyoung/KleanTalk/releases/latest/download/KleanTalk.dmg"><span class="ko">KleanTalk 받기</span><span class="en">Download KleanTalk</span></a>
+    <span class="cta-sub"><span class="ko">또는 터미널: </span><span class="en">or via terminal: </span><code>brew tap leejongyoung/kleantalk &amp;&amp; brew install --cask kleantalk</code><br><a href="https://github.com/leejongyoung/KleanTalk">GitHub</a> · <a href="https://github.com/leejongyoung/KleanTalk/issues/new?template=bug_report.md"><span class="ko">버그 신고</span><span class="en">Report a bug</span></a></span>
+  </section>
+
+  <figure>
+    <img class="ko" src="img/1-hero-ko.png" alt="광고가 있을 때와 KleanTalk 설치 후 비교" loading="lazy">
+    <img class="en" src="img/1-hero-en.png" alt="KakaoTalk with ads and with KleanTalk" loading="lazy">
+  </figure>
+
+  <h2><span class="ko">특징</span><span class="en">Highlights</span></h2>
+  <div class="grid">
+    <div class="card">
+      <h3><span class="ko">카카오톡을 고치지 않습니다</span><span class="en">KakaoTalk stays untouched</span></h3>
+      <p><span class="ko">광고 주소만 막으면 홍보 배너가 대신 뜹니다. KleanTalk은 광고 요청을 성공시키되 내용만 비워, 그 자리까지 창과 같은 색으로 비워 둡니다.</span><span class="en">Blocking ad domains alone brings up a promo banner. KleanTalk answers ad requests with well-formed blank ads, leaving the slot empty in the window's own colors.</span></p>
+    </div>
+    <div class="card">
+      <h3><span class="ko">설치하면 끝</span><span class="en">Install once</span></h3>
+      <p><span class="ko">켜고 끄는 설정이 없습니다. 제거 버튼 하나로 hosts·서버·신뢰가 모두 원래대로 돌아갑니다.</span><span class="en">No switches to manage. One Uninstall button puts hosts, server and trust back the way they were.</span></p>
+    </div>
+    <div class="card">
+      <h3><span class="ko">열려 있습니다</span><span class="en">Open in every way</span></h3>
+      <p><span class="ko">소스 공개(MIT), 진단 정보 복사, 버그 신고 전 미리보기까지. 무엇이 바뀌는지 전부 설명합니다.</span><span class="en">MIT source, copyable diagnostics, bug-report preview. Everything it changes is documented.</span></p>
+    </div>
+  </div>
+
+  <h2><span class="ko">설치</span><span class="en">Install</span></h2>
+  <figure>
+    <img class="ko" src="img/3-install-steps-ko.png" alt="설치는 세 단계" loading="lazy">
+    <img class="en" src="img/3-install-steps-en.png" alt="Three steps to install" loading="lazy">
+  </figure>
+  <ol class="steps">
+    <li><span class="ko">DMG를 받아 앱을 응용 프로그램 폴더로 옮깁니다. (가급적 <code>/Applications</code>)</span><span class="en">Download the DMG and move the app to Applications (preferably <code>/Applications</code>).</span></li>
+    <li><span class="ko">앱을 열고 언어를 고른 뒤 <b>설치</b>를 누릅니다. 암호를 두 번 묻습니다(관리자 설치, 인증서 신뢰 확인).</span><span class="en">Open it, choose a language, and click <b>Install</b>. You'll enter your password twice (administrator install, certificate-trust confirmation).</span></li>
+    <li><span class="ko">카카오톡이 자동으로 다시 시작되면 끝입니다.</span><span class="en">KakaoTalk restarts automatically, and you're done.</span></li>
+  </ol>
+  <p class="note"><span class="ko">처음 열 때 "Apple은 악성 코드가 없음을 확인할 수 없습니다" 경고가 뜨면, <b>시스템 설정 → 개인정보 보호 및 보안</b> 아래쪽의 <b>그래도 열기</b>를 누르세요. Apple 공증을 받지 않은 개인 앱이라 뜨는 경고입니다.</span><span class="en">If macOS says it can't verify the app on first launch, click <b>Open Anyway</b> in <b>System Settings → Privacy &amp; Security</b>. The warning appears because this personal project isn't notarized by Apple.</span></p>
+
+  <h2><span class="ko">어떻게 동작하나요</span><span class="en">How it works</span></h2>
+  <div class="grid">
+    <div class="card"><h3>1</h3><p><span class="ko">hosts에서 카카오 광고 주소를 막습니다.</span><span class="en">Blocks Kakao's ad domains in <code>/etc/hosts</code>.</span></p></div>
+    <div class="card"><h3>2</h3><p><span class="ko">광고를 받아 오는 주소(<code>serv.ds.kakao.com</code>)만 맥 안의 작은 서버로 돌립니다.</span><span class="en">Points <code>serv.ds.kakao.com</code> at a tiny server on your Mac.</span></p></div>
+    <div class="card"><h3>3</h3><p><span class="ko">그 서버가 진짜 광고와 같은 형식의 빈 광고를 돌려줍니다. 진짜 광고 서버에는 연결하지 않습니다.</span><span class="en">That server answers with a well-formed blank ad. Nothing is fetched from the real ad server.</span></p></div>
+  </div>
+
+  <h2><span class="ko">보안</span><span class="en">Security</span></h2>
+  <ul>
+    <li><span class="ko">인증서는 <code>serv.ds.kakao.com</code> 한 주소에만 쓸 수 있는 일반 인증서이고, 내 계정에서 그 주소의 HTTPS에만 신뢰합니다.</span><span class="en">The certificate is a non-CA leaf for <code>serv.ds.kakao.com</code> only, trusted for that hostname's HTTPS in your account only.</span></li>
+    <li><span class="ko">키는 관리자만 읽을 수 있고, 서버는 권한 없는 계정(nobody)으로 이 맥 안의 전용 주소에서만 받습니다.</span><span class="en">Its key is readable by root only; the server runs as <code>nobody</code> and listens only on a dedicated loopback address.</span></li>
+    <li><span class="ko">소스는 모두 공개되어 있습니다(MIT). 무엇이 바뀌는지는 <a href="https://github.com/leejongyoung/KleanTalk#이-맥에서-바뀌는-것">README</a>에 정리되어 있습니다.</span><span class="en">All source code is public (MIT). Every change is listed in the <a href="https://github.com/leejongyoung/KleanTalk#english">README</a>.</span></li>
+  </ul>
+
+  <footer>
+    <span class="ko">카카오와 관계없는 비공식 개인 프로젝트입니다. 사용에 따른 책임은 사용자에게 있습니다.</span>
+    <span class="en">An unofficial personal project, not affiliated with Kakao. Use at your own risk.</span>
+    <br><a href="https://github.com/leejongyoung/KleanTalk">github.com/leejongyoung/KleanTalk</a> · <a href="https://github.com/leejongyoung/KleanTalk/issues/new?template=bug_report.md"><span class="ko">버그 신고</span><span class="en">Report a bug</span></a>
+  </footer>
+</div>
+<script>
+  (function () {
+    var body = document.body;
+    function set(lang) {
+      body.setAttribute("data-lang", lang);
+      document.documentElement.lang = lang;
+      document.querySelectorAll(".lang button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.set === lang)); });
+    }
+    var saved = null;
+    try { saved = localStorage.getItem("kleantalk-lang-choice"); } catch (e) {}
+    set(saved === "en" ? "en" : "ko");
+    document.querySelectorAll(".lang button").forEach(function (b) {
+      b.addEventListener("click", function () {
+        set(b.dataset.set);
+        try { localStorage.setItem("kleantalk-lang-choice", b.dataset.set); } catch (e) {}
+      });
+    });
+  })();
+  // 다운로드 수: GitHub Release의 KleanTalk.dmg 받은 횟수 합계.
+  fetch("https://api.github.com/repos/leejongyoung/KleanTalk/releases?per_page=100").then(function (r) { return r.ok ? r.json() : null; }).then(function (releases) {
+    if (!releases) return;
+    var total = 0;
+    releases.forEach(function (rel) { rel.assets.forEach(function (a) { if (/\.dmg$/.test(a.name)) total += a.download_count; }); });
+    if (!(total > 0)) return;
+    var n = total.toLocaleString("ko-KR");
+    document.querySelectorAll("#count .n").forEach(function (el) { el.textContent = n; });
+    document.getElementById("count").hidden = false;
+  }).catch(function () {});
+</script>
+</body>
+</html>
