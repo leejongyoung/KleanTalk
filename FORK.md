@@ -17,6 +17,18 @@ upstream(`showmeyourway-sketch/KleanTalk`)의 fork입니다. 분기점: v1.11 (`
 - 유효성은 백업에서 공개키를 유도해 대조하는 방식으로 확인한다 (주기적).
 - 분실·유출 시: 새 키쌍 생성 → `SUPublicEDKey` 교체 → 구 버전 사용자는 수동 재설치. 릴리스 노트에 공지한다.
 
+## 재해 복구 (릴리스용 Mac 초기화 후)
+
+저장소(work·main·upstream-submit·gh-pages), 태그·릴리스, 탭은 전부 GitHub에 있다. 새 Mac에서 필요한 것은 Xcode·GitHub 인증·서명 키 3가지뿐이다.
+
+1. Xcode 설치 (App Store), `gh` 설치 후 `gh auth login`
+2. fork 클론: `gh repo clone leejongyoung/KleanTalk && cd KleanTalk && git checkout work`
+3. 서명 키 복원: workbench `inbox/kleantalk-signing/` 백업을 `~/kleantalk-sparkle-private-key`로 복사(`chmod 600`)한 뒤, `./build.sh` 1회 실행 후 `vendor/Sparkle-*/bin/generate_keys --account kleantalk -f ~/kleantalk-sparkle-private-key`
+4. 공개키 대조: 키체인 키의 공개키가 `Info.plist`의 `SUPublicEDKey`와 일치해야 한다 (불일치 시 릴리스 중단)
+5. 릴리스: `KLEANTALK_SPARKLE_KEY=1 ./scripts/release.sh X.Y.Z notes.md` (GUI 세션에서 실행 — 키체인 접근 필요)
+6. 검증: DMG 회수 → 버전·universal·서명·내장 해시·appcast 서명 확인
+7. tap은 자동갱신 워크플로가 처리하므로 평소 수동 작업 불필요
+
 ## 브랜치 운용
 
 - `main`: upstream 미러. 직접 커밋하지 않고 upstream 기본 브랜치와 fast-forward로만 맞춥니다 (`git fetch upstream` → `git merge --ff-only upstream/main`). 갈라지면 강제 동기화하지 않고 보고합니다.
