@@ -1,4 +1,5 @@
 import AppKit
+import CryptoKit
 import Sparkle
 import SwiftUI
 
@@ -6,7 +7,7 @@ import SwiftUI
 // 설치하면 (1) /etc/hosts로 카카오 광고 주소를 막고 (2) 광고 요청에 빈 광고를 돌려주는 작은 서버(AdServer/)를
 // 이 맥에 띄운다. 켜고 끄는 설정은 없고, 설치하면 작동하고 제거하면 모두 원래대로 돌아간다.
 // 로그인 시 --background 인자로 창 없이 실행돼, 설정이 풀렸을 때(macOS 업데이트로 hosts 초기화 등)만 창을 띄운다.
-// 새 버전은 Sparkle로 받는다(하루 한 번 확인, EdDSA 서명 확인). 업데이트에 새 서버가 들어 있으면 '다시 설치'로 마무리한다.
+// 새 버전은 GitHub Releases에서 DMG로 받는다 (fork에 자동 업데이트 없음, #1). 업데이트에 새 서버가 들어 있으면 '다시 설치'로 마무리한다.
 
 let isBackgroundLaunch = CommandLine.arguments.contains("--background")
 
@@ -19,7 +20,7 @@ struct Strings {
     let installTitle: String, installItems: [String], adminNote: String, cancel: String, install: String
     let working: String, notWorking: String, checking: String, notWorkingNote: String, reinstall: String, restarted: String
     let language: String, uninstallButton: String, uninstallTitle: String, uninstallBody: String, uninstall: String
-    let adminPrompt: String, missingFiles: String, trustCanceled: String, trustFailed: String
+    let adminPrompt: String, missingFiles: String, scriptTampered: String, trustCanceled: String, trustFailed: String
     let checkUpdates: String, serverOutdated: String, version: String, upToDate: String, updateTo: String, noAutoUpdate: String
     let reportBug: String, bugTitle: String, bugBody: String, copyInfo: String, copiedInfo: String, infoTitle: String
     let quit: String, edit: String, cut: String, copy: String, paste: String, selectAll: String, window: String, close: String
@@ -36,6 +37,7 @@ struct Strings {
         uninstallBody: "광고 차단과 빈 광고 서버를 모두 지웁니다.", uninstall: "제거",
         adminPrompt: "KleanTalk을 설치하거나 제거하려면 암호가 필요합니다.",
         missingFiles: "앱 안에서 설치 파일을 찾지 못했습니다.",
+        scriptTampered: "앱 안의 설치 파일이 바뀌었습니다. DMG를 다시 받아 설치하세요.",
         trustCanceled: "인증서 등록을 취소했습니다. 다시 설치를 누르세요.",
         trustFailed: "인증서를 등록하지 못했습니다. 다시 설치를 누르세요.",
         checkUpdates: "업데이트 확인…", serverOutdated: "업데이트를 마치려면 다시 설치를 누르세요.",
@@ -59,6 +61,7 @@ struct Strings {
         uninstallBody: "Removes ad blocking and the blank ad server.", uninstall: "Uninstall",
         adminPrompt: "KleanTalk needs your password to install or uninstall.",
         missingFiles: "Couldn’t find the installer files inside the app.",
+        scriptTampered: "The installer files inside the app were modified. Download the DMG again.",
         trustCanceled: "Certificate registration was canceled. Click Reinstall.",
         trustFailed: "Couldn’t register the certificate. Click Reinstall.",
         checkUpdates: "Check for Updates…", serverOutdated: "Click Reinstall to finish the update.",
@@ -166,10 +169,18 @@ enum AdServer {
         return SecCertificateCreateWithData(nil, data as CFData)
     }
 
+    /// 등록된 신뢰가 '이 인증서의, 이 호스트 HTTPS에 대한 trustRoot'인지까지 확인한다.
+    /// 존재 여부만 보면 거부 설정이나 다른 정책도 통과하므로 (#3).
     static func isTrusted(_ data: Data? = certificateData()) -> Bool {
         guard let cert = certificate(data) else { return false }
         var existing: CFArray?
-        return SecTrustSettingsCopyTrustSettings(cert, .user, &existing) == errSecSuccess
+        guard SecTrustSettingsCopyTrustSettings(cert, .user, &existing) == errSecSuccess,
+              let settings = existing as? [[String: Any]] else { return false }
+        return settings.contains {
+            ($0[kSecTrustSettingsPolicyString as String] as? String) == host
+                && ($0[kSecTrustSettingsResult as String] as? Int)
+                    == Int(SecTrustSettingsResult.trustRoot.rawValue)
+        }
     }
 
     /// 서버 인증서를 'serv.ds.kakao.com의 HTTPS 서버 인증'에만 믿도록 이 사용자의 신뢰 설정에 등록한다.
@@ -202,12 +213,23 @@ enum AdServer {
         return (try? await NSWorkspace.shared.openApplication(at: url, configuration: config)) != nil
     }
 
+    /// 파일의 SHA-256 hex. 읽지 못하면 nil (해시 비교에서 불일치로 처리된다).
+    private static func sha256(of path: String) -> String? {
+        guard let data = try? Data(contentsOf: URL(fileURLWithPath: path)) else { return nil }
+        return SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+    }
+
     /// 앱 안에 든 설치·제거 스크립트를 관리자 권한으로 실행한다. (암호 창은 macOS가 띄운다)
     static func run(install: Bool, t: Strings) -> Result {
         func quoted(_ s: String) -> String { "'" + s.replacingOccurrences(of: "'", with: "'\\''") + "'" }
         guard let script = Bundle.main.path(forResource: install ? "install-adserver" : "uninstall-adserver", ofType: "sh"),
               let binary = Bundle.main.path(forResource: "kleantalk-adserver", ofType: nil) else {
             return .failed(t.missingFiles)
+        }
+        // 앱이 ad-hoc 서명이라 번들 변조를 검출하지 못한다. 빌드 때 내장한 해시와 다르면 root 실행을 거부한다 (#2).
+        guard sha256(of: script) == (install ? ScriptHashes.installAdserver : ScriptHashes.uninstallAdserver),
+              sha256(of: binary) == ScriptHashes.adserverBinary else {
+            return .failed(t.scriptTampered)
         }
         let cmd = "/bin/zsh \(quoted(script)) \(quoted(binary)) 2>&1"
         func escape(_ s: String) -> String {
