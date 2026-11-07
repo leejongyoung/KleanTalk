@@ -3,7 +3,7 @@
 # 실행: KleanTalk 앱의 '빈 광고 서버 설치' 버튼, 또는 ./build.sh 로 빌드한 뒤  sudo ./scripts/install-adserver.sh [서버 실행 파일]
 #
 # 하는 일
-#  1. serv.ds.kakao.com 한 이름에만 쓰는 인증서와 키를 만든다. (인증 기관이 아닌 일반 인증서, 825일)
+#  1. serv.ds.kakao.com 한 이름에만 쓰는 인증서와 키를 만든다. (인증 기관이 아닌 일반 인증서, 365일)
 #     키는 root만 읽을 수 있는 폴더에 둔다.
 #  2. (인증서 신뢰 등록은 이 스크립트가 아니라 KleanTalk 앱이 사용자 권한으로 한다. 아래 참고)
 #  3. 빈 광고 서버를 LaunchDaemon으로 등록한다. (전용 주소 127.84.11.1:443 / 포트를 연 뒤 nobody 권한으로 동작)
@@ -53,7 +53,7 @@ keyUsage = critical,digitalSignature,keyEncipherment
 extendedKeyUsage = serverAuth
 CNF
 /usr/bin/openssl genrsa -out "$TMP/key.pem" 2048 2>/dev/null
-/usr/bin/openssl req -new -x509 -key "$TMP/key.pem" -days 825 -config "$TMP/req.cnf" -out "$TMP/cert.pem" 2>/dev/null
+/usr/bin/openssl req -new -x509 -key "$TMP/key.pem" -days 365 -config "$TMP/req.cnf" -out "$TMP/cert.pem" 2>/dev/null
 install -o root -g wheel -m 600 /dev/null "$DIR/key.der"
 /usr/bin/openssl rsa -in "$TMP/key.pem" -outform DER -out "$DIR/key.der" 2>/dev/null
 install -o root -g wheel -m 644 "$TMP/cert.pem" "$DIR/cert.pem"

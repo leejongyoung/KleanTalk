@@ -24,7 +24,7 @@
 
 ## 설치
 
-1. [KleanTalk.dmg 받기](https://github.com/leejongyoung/KleanTalk/releases/latest/download/KleanTalk.dmg) 후 `KleanTalk.app`을 응용 프로그램 폴더로 옮깁니다.
+1. [KleanTalk.dmg 받기](https://github.com/leejongyoung/KleanTalk/releases/latest/download/KleanTalk.dmg) 후 `KleanTalk.app`을 응용 프로그램 폴더로 옮깁니다. 가급적 `/Applications`(관리자 소유)에 두세요. `~/Applications`처럼 사용자 소유 폴더에서는 앱이 번들 변조를 매번 확인하지만, 관리자 소유가 더 안전합니다.
 2. 앱을 엽니다. 처음 열 때 *"Apple은 악성 코드가 없는지 확인할 수 없습니다"* 경고가 뜨면 다음과 같이 합니다.
    - 이 앱은 Apple 공증을 받지 않아 이 경고가 뜹니다.
    - **시스템 설정 → 개인정보 보호 및 보안**의 아래쪽에서 **그래도 열기**를 누르세요.

@@ -14,6 +14,16 @@ rm -f /Library/LaunchDaemons/$LABEL.plist
 if [[ -f $DIR/cert.pem ]]; then
   FP=$(/usr/bin/openssl x509 -in "$DIR/cert.pem" -noout -fingerprint -sha1 | cut -d= -f2 | tr -d :)
   security delete-certificate -Z "$FP" /Library/Keychains/System.keychain 2>/dev/null || true
+  # 터미널 설치 안내대로 로그인 키체인에 신뢰가 들어갔을 수 있다 (#3). 사용자마다 best-effort로 지운다.
+  # 앱 설치 경로의 사용자 신뢰는 앱이 먼저 지운다 (KleanTalk.untrustCertificate).
+  for home in /Users/*; do
+    [[ -d $home ]] || continue
+    user=${home#/Users/}
+    [[ $user == Shared || $user == "*"* ]] && continue
+    keychain="$home/Library/Keychains/login.keychain-db"
+    [[ -f $keychain ]] || continue
+    sudo -u "$user" security delete-certificate -Z "$FP" "$keychain" 2>/dev/null || true
+  done
 fi
 rm -rf "${DIR:?}"
 rmdir "/Library/Application Support/KleanTalk" 2>/dev/null || true
