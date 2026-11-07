@@ -21,7 +21,7 @@
   <a href="#english">English</a>
 </p>
 
-> 카카오와 관계없는 비공식 개인 프로젝트입니다. 카톡 이용약관과 맞지 않을 수 있으니 확인하고 사용하세요.
+> 카카오와 관계없는 비공식 프로젝트입니다. 사용으로 발생하는 모든 책임은 사용자에게 있습니다.
 
 ## 설치
 
@@ -197,7 +197,7 @@ If macOS warns it cannot check `kleantalk-adserver`, reinstall from the latest D
 The certificate is a non-CA leaf for `serv.ds.kakao.com` only. Its key is readable
 by root only, and the server drops to `nobody` after binding a dedicated loopback address.
 
-*An unofficial personal project, not affiliated with Kakao. Use at your own risk.*
+*An unofficial project not affiliated with Kakao. All liability arising from use rests with the user.*
 
 </details>
 
