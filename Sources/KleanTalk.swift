@@ -20,7 +20,7 @@ struct Strings {
     let working: String, notWorking: String, checking: String, notWorkingNote: String, reinstall: String, restarted: String
     let language: String, uninstallButton: String, uninstallTitle: String, uninstallBody: String, uninstall: String
     let adminPrompt: String, missingFiles: String, trustCanceled: String, trustFailed: String
-    let checkUpdates: String, serverOutdated: String, version: String, upToDate: String, updateTo: String
+    let checkUpdates: String, serverOutdated: String, version: String, upToDate: String, updateTo: String, noAutoUpdate: String
     let reportBug: String, bugTitle: String, bugBody: String, copyInfo: String, copiedInfo: String, infoTitle: String
     let quit: String, edit: String, cut: String, copy: String, paste: String, selectAll: String, window: String, close: String
 
@@ -39,7 +39,7 @@ struct Strings {
         trustCanceled: "인증서 등록을 취소했습니다. 다시 설치를 누르세요.",
         trustFailed: "인증서를 등록하지 못했습니다. 다시 설치를 누르세요.",
         checkUpdates: "업데이트 확인…", serverOutdated: "업데이트를 마치려면 다시 설치를 누르세요.",
-        version: "버전", upToDate: "최신 버전", updateTo: "%@로 업데이트",
+        version: "버전", upToDate: "최신 버전", updateTo: "%@로 업데이트", noAutoUpdate: "자동 업데이트 없음",
         reportBug: "버그 신고", bugTitle: "[버그] ",
         bugBody: "### 무슨 일이 있었나요?\n\n\n### 어떻게 하면 다시 생기나요?\n1. \n\n### 환경 (자동으로 채움)\n",
         copyInfo: "정보 복사", copiedInfo: "복사했습니다", infoTitle: "KleanTalk 진단 정보",
@@ -62,7 +62,7 @@ struct Strings {
         trustCanceled: "Certificate registration was canceled. Click Reinstall.",
         trustFailed: "Couldn’t register the certificate. Click Reinstall.",
         checkUpdates: "Check for Updates…", serverOutdated: "Click Reinstall to finish the update.",
-        version: "Version", upToDate: "Up to date", updateTo: "Update to %@",
+        version: "Version", upToDate: "Up to date", updateTo: "Update to %@", noAutoUpdate: "No automatic updates",
         reportBug: "Report a Bug", bugTitle: "[Bug] ",
         bugBody: "### What happened?\n\n\n### How can we reproduce it?\n1. \n\n### Environment (filled in automatically)\n",
         copyInfo: "Copy Info", copiedInfo: "Copied", infoTitle: "KleanTalk diagnostic info",
@@ -342,10 +342,12 @@ final class AppModel: ObservableObject {
 
     /// GitHub에 새 이슈 쓰기 화면을 연다. 버전·macOS·칩·카카오톡 버전·상태를 본문에 미리 채운다.
     /// 설치했는데 작동하지 않으면 어느 단계에서 막혔는지도 넣는다.
+    /// 이슈·버그 신고가 이 fork를 가리키도록 고정한다. upstream 주소가 남아 있으면 #1 회귀.
+    static let issueNewURL = "https://github.com/leejongyoung/KleanTalk/issues/new"
     func reportBug() {
         Task {
             let checks = AdServer.installed && state != .working ? await AdServer.diagnose() : []
-            var c = URLComponents(string: "https://github.com/showmeyourway-sketch/KleanTalk/issues/new")!
+            var c = URLComponents(string: Self.issueNewURL)!
             let body = t.bugBody + environment(checks: checks).joined(separator: "\n")
             c.queryItems = [.init(name: "labels", value: "bug"), .init(name: "title", value: t.bugTitle), .init(name: "body", value: body)]
             if let url = c.url { NSWorkspace.shared.open(url) }
@@ -548,6 +550,10 @@ struct StatusView: View {
                         Text("\(model.version) · \(t.upToDate)").foregroundStyle(.secondary)
                     case .unknown:
                         Text(model.version).foregroundStyle(.secondary)
+                        // fork에는 업데이트 피드가 없다(SUFeedURL 미포함, #1). 있으면 Sparkle이 .upToDate/.available으로 바꾼다.
+                        if Bundle.main.infoDictionary?["SUFeedURL"] == nil {
+                            Text(t.noAutoUpdate).font(.caption).foregroundStyle(.secondary)
+                        }
                     }
                 }
                 Divider()
@@ -813,7 +819,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, SPUU
         let main = NSMenu()
         let appItem = NSMenuItem()
         let appMenu = NSMenu()
-        appMenu.addItem(withTitle: t.checkUpdates, action: #selector(checkForUpdates(_:)), keyEquivalent: "").target = self
+        let updateItem = NSMenuItem(title: t.checkUpdates, action: #selector(checkForUpdates(_:)), keyEquivalent: "")
+        updateItem.target = self
+        // fork에는 업데이트 피드가 없다(#1). 피드 없이 확인을 누르면 Sparkle 오류만 뜨므로 비활성화한다.
+        updateItem.isEnabled = updater.updater.canCheckForUpdates
+        appMenu.addItem(updateItem)
         appMenu.addItem(withTitle: t.reportBug + "…", action: #selector(reportBug(_:)), keyEquivalent: "").target = self
         appMenu.addItem(.separator())
         appMenu.addItem(withTitle: t.quit, action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
