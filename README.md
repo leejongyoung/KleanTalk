@@ -24,7 +24,7 @@
 
 ## 설치
 
-1. [KleanTalk.dmg 받기](https://github.com/showmeyourway-sketch/KleanTalk/releases/latest/download/KleanTalk.dmg) 후 `KleanTalk.app`을 응용 프로그램 폴더로 옮깁니다.
+1. [KleanTalk.dmg 받기](https://github.com/leejongyoung/KleanTalk/releases/latest/download/KleanTalk.dmg) 후 `KleanTalk.app`을 응용 프로그램 폴더로 옮깁니다.
 2. 앱을 엽니다. 처음 열 때 *"Apple은 악성 코드가 없는지 확인할 수 없습니다"* 경고가 뜨면 다음과 같이 합니다.
    - 이 앱은 Apple 공증을 받지 않아 이 경고가 뜹니다.
    - **시스템 설정 → 개인정보 보호 및 보안**의 아래쪽에서 **그래도 열기**를 누르세요.
@@ -38,11 +38,9 @@ macOS 업데이트로 hosts가 초기화되는 경우 등에 확인합니다. �
 
 ## 업데이트
 
-1.3부터는 앱이 하루에 한 번 새 버전을 확인합니다. 새 버전이 있으면 알려 주고, 누르면 설치한 뒤 다시 실행합니다.
-메뉴의 **업데이트 확인…**으로 바로 확인할 수도 있습니다.
-- 업데이트 파일은 서명을 확인한 뒤에만 설치합니다(Sparkle, EdDSA).
+이 fork에는 자동 업데이트가 없습니다. 새 버전은 GitHub Releases 공지로 확인하고, 새 DMG를 받아 다시 설치하세요.
+(upstream의 Sparkle 자동 업데이트는 서명 키가 upstream에 있어 fork에서 뺐습니다. 자세한 사정은 `FORK.md`.)
 - 새 버전에 바뀐 서버가 들어 있으면 **다시 설치**를 한 번 눌러 마무리합니다. 관리자 암호를 묻습니다.
-- 1.2 이하를 쓰고 있다면 1.3은 직접 받아 설치해 주세요. 그다음부터는 자동으로 업데이트됩니다.
 
 ## 제거
 
@@ -54,7 +52,7 @@ KleanTalk을 열고 **제거…**를 누릅니다. 다음을 모두 되돌리고
 
 ## 버그 신고
 
-KleanTalk 메뉴의 **버그 신고…**(1.4부터)를 누르면 GitHub 이슈 쓰기 화면이 열립니다. 앱 버전, macOS, 칩, 카카오톡 버전, 상태가 미리 채워집니다. 직접 쓰려면 [이슈 쓰기](https://github.com/showmeyourway-sketch/KleanTalk/issues/new?template=bug_report.md)를 누르세요. GitHub 계정이 필요합니다.
+KleanTalk 메뉴의 **버그 신고…**(1.4부터)를 누르면 GitHub 이슈 쓰기 화면이 열립니다. 앱 버전, macOS, 칩, 카카오톡 버전, 상태가 미리 채워집니다. 직접 쓰려면 [이슈 쓰기](https://github.com/leejongyoung/KleanTalk/issues/new?template=bug_report.md)를 누르세요. GitHub 계정이 필요합니다.
 
 ## 이 맥에서 바뀌는 것
 
@@ -92,12 +90,10 @@ KleanTalk 메뉴의 **버그 신고…**(1.4부터)를 누르면 GitHub 이슈 �
 ./scripts/release.sh 1.4 notes.md   # 새 버전 배포 (아래 설명)
 ```
 
-- 처음 빌드할 때 [Sparkle](https://sparkle-project.org) 2.10.0을 공식 릴리스에서 받아, SHA-256을 확인한 뒤 `vendor/`에 풉니다.
-- **새 버전 배포:** `scripts/release.sh`가 버전을 올리고 다음 일을 한 번에 합니다.
-  - DMG와 업데이트용 zip을 만들고, zip을 서명합니다.
-  - `appcast.xml`을 만듭니다.
-  - 커밋·태그·push 후 GitHub Release에 올립니다.
-  - 설치된 앱은 `releases/latest/download/appcast.xml`을 보므로, 새 Release가 Latest가 되면 업데이트를 받습니다.
+- 처음 빌드할 때 [Sparkle](https://sparkle-project.org) 2.10.0을 공식 릴리스에서 받아, SHA-256을 확인한 뒤 `vendor/`에 풉니다. (fork에 업데이트 피드가 없어도 앱 링크용으로 필요합니다.)
+- **새 버전 배포:** `scripts/release.sh`가 버전을 올리고 다음 일을 한 번에 합니다. fork용 Sparkle 키쌍이 생기기 전까지는 DMG+zip만 올리고 appcast는 만들지 않습니다.
+  - DMG와 zip을 만들고, 커밋·태그·push 후 GitHub Release에 올립니다.
+  - fork용 EdDSA 키쌍을 만들면 `Info.plist`에 `SUFeedURL`·`SUPublicEDKey`를 되살리고 자동 업데이트를 다시 켭니다 (#1 후속).
 
 - 빌드에는 Xcode가 필요합니다. macOS 12용 Intel 빌드에 쓰는 Swift 호환 라이브러리가 Command Line Tools에는 없습니다.
 - 아이콘은 미리 컴파일한 파일(`Icon/compiled/`)을 씁니다. 아이콘을 바꿀 때만 `./scripts/make-icon.sh`를 실행하세요(Xcode 26 이상 필요).
@@ -131,9 +127,9 @@ KleanTalk turns the ad slot in KakaoTalk for Mac into **empty space in KakaoTalk
 - **Install:**
   1. Open the app and choose a language, then click **Install**. You'll enter your password twice: once for the administrator install, and once for macOS's certificate-trust confirmation.
   2. Because the app isn't notarized, macOS may block the first launch. Allow it in **System Settings → Privacy & Security → Open Anyway**.
-- **Updates (1.3+):** the app checks once a day, and you can also choose **Check for Updates…** from the menu. Updates are verified with an EdDSA signature (Sparkle) before installing. If an update ships a new blank-ad server, click **Reinstall** once to finish.
+- **Updates:** not enabled in this fork yet. New versions are announced as GitHub Releases — download the new DMG and reinstall. (Upstream auto-update via Sparkle was removed because its signing key belongs to upstream; see `FORK.md`.)
 - **Uninstall:** click **Uninstall…** in the app. It removes everything (server, certificate trust, hosts entries, login item) and moves the app to the Trash.
-- **Report a bug:** choose **Report a Bug…** in the app menu (1.4+) to open a GitHub issue with your app version, macOS, chip, KakaoTalk version, and status filled in, or [open one directly](https://github.com/showmeyourway-sketch/KleanTalk/issues/new?template=bug_report.md). Needs a GitHub account.
+- **Report a bug:** choose **Report a Bug…** in the app menu (1.4+) to open a GitHub issue with your app version, macOS, chip, KakaoTalk version, and status filled in, or [open one directly](https://github.com/leejongyoung/KleanTalk/issues/new?template=bug_report.md). Needs a GitHub account.
 - **Security:**
   - The certificate is a non-CA leaf for `serv.ds.kakao.com` only, trusted for that hostname's SSL server auth in your user trust settings.
   - Its key is readable by root only.
