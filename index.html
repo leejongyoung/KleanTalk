@@ -26,8 +26,10 @@
   .tagline { font-size: clamp(20px, 3.2vw, 28px); font-weight: 600; margin: 0 0 12px; }
   .meta { color: var(--sub); margin: 0 0 28px; }
   .cta { display: inline-flex; align-items: center; gap: 8px; background: var(--yellow); color: var(--brown); font-weight: 700; text-decoration: none; padding: 14px 28px; border-radius: 999px; font-size: 18px; }
-  .cta-sub { display: block; margin-top: 12px; font-size: 14px; color: var(--sub); }
-  .count { display: table; margin: 18px auto; border: 1px solid var(--line); border-radius: 999px; padding: 3px 14px; font-size: 14px; }
+  .cta-sub { display: block; margin: 16px 0 4px; font-size: 14px; color: var(--sub); }
+  .term { max-width: 620px; margin: 18px auto 0; text-align: left; font-size: 15px; }
+  .term code { color: var(--text); }
+  .count { display: table; margin: 22px auto 0; border: 1px solid var(--line); border-radius: 999px; padding: 3px 14px; font-size: 14px; color: var(--sub); }
   .count[hidden] { display: none; }
   figure { margin: 40px 0; }
   figure img { width: 100%; height: auto; border-radius: 16px; border: 1px solid var(--line); display: block; }
@@ -60,9 +62,10 @@
     <h1>KleanTalk</h1>
     <p class="tagline"><span class="ko">맥 카카오톡 광고 자리를 빈 공간으로</span><span class="en">Blank the KakaoTalk for Mac ad slot</span></p>
     <p class="meta"><span class="ko">무료 · 오픈소스(MIT) · macOS 12 이상 · 카톡을 고치지 않음</span><span class="en">Free · Open source (MIT) · macOS 12+ · Never touches the KakaoTalk app</span></p>
-    <p class="count" id="count" hidden><span class="ko"><b class="n"></b>명이 받았어요</span><span class="en">Downloaded <b class="n"></b> times</span></p>
     <a class="cta" href="https://github.com/leejongyoung/KleanTalk/releases/latest/download/KleanTalk.dmg"><span class="ko">KleanTalk 받기</span><span class="en">Download KleanTalk</span></a>
-    <span class="cta-sub"><span class="ko">또는 터미널: </span><span class="en">or via terminal: </span><code>brew tap leejongyoung/kleantalk &amp;&amp; brew install --cask kleantalk</code><br><a href="https://github.com/leejongyoung/KleanTalk">GitHub</a> · <a href="https://github.com/leejongyoung/KleanTalk/issues/new?template=bug_report.md"><span class="ko">버그 신고</span><span class="en">Report a bug</span></a></span>
+    <span class="cta-sub"><a href="https://github.com/leejongyoung/KleanTalk">GitHub</a> · <a href="https://github.com/leejongyoung/KleanTalk/issues/new?template=bug_report.md"><span class="ko">버그 신고</span><span class="en">Report a bug</span></a></span>
+    <pre class="term"><code>$ brew tap leejongyoung/kleantalk &amp;&amp; brew install --cask kleantalk</code></pre>
+    <p class="count" id="count" hidden><span class="ko"><b class="n"></b>명이 받았어요</span><span class="en">Downloaded <b class="n"></b> times</span></p>
   </section>
 
   <figure>
