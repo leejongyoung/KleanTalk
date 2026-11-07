@@ -34,3 +34,16 @@ upstream(`showmeyourway-sketch/KleanTalk`)의 fork입니다. 분기점: v1.11 (`
 - `hardening`: 방어 심화 (원자 교체·검증 강화·마스킹)
 - `privacy`: 진단 로그·수집 데이터
 - 기본 라벨(`bug`·`documentation`·`enhancement` 등)은 GitHub 기본값 그대로 씁니다.
+
+## 커밋 규칙
+
+- 형식: `type: 한국어 요약 한 줄` (50자 내, 마침표 없음). 영어 말머리만 쓰고 나머지는 한국어.
+- `feat` 기능추가 · `fix` 버그수정 · `docs` 문서 · `refactor` 리팩터 · `test` 시험 · `chore` 빌드·설정·잡일 · `release` 릴리스 커밋
+- 본문: 배경 → 변경 → 검증 순서로 짧게. AI 작성자 표시(`Co-Authored-By` 등)는 넣지 않습니다.
+- 예: `fix: 설치 시 검역 표시 제거`
+
+## 릴리스 규칙
+
+- 제목: `KleanTalk X.Y.Z`
+- 본문: 한 줄 요약 → `### 고친 점` → `### 설치` → `### 알려진 문제` → 구분선 → 영어(같은 구조). 체크박스·이모지는 쓰지 않습니다.
+- 에셋: `KleanTalk.dmg` + `KleanTalk-X.Y.Z.zip`. 자동 업데이트용 appcast는 fork 키가 생기기 전까지 올리지 않습니다.
