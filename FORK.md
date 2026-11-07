@@ -4,11 +4,18 @@ upstream(`showmeyourway-sketch/KleanTalk`)의 fork입니다. 분기점: v1.11 (`
 
 ## upstream과 다른 점
 
-- **자동 업데이트는 fork 서명 키로 동작합니다.** `SUFeedURL`은 fork 릴리스의 appcast, 서명은 fork EdDSA 키(`SUPublicEDKey`, 비공개 키는 개발자 키체인 + 별도 백업). upstream 키와 무관합니다.
+- **자동 업데이트는 fork 서명 키로 동작합니다.** `SUFeedURL`은 fork 릴리스의 appcast, 서명은 fork EdDSA 키(`SUPublicEDKey`, 비공개 키는 아래 키 관리 참고). upstream 키와 무관합니다.
 - **버그 신고·업데이트 확인이 이 fork를 가리킵니다.** (`Sources/KleanTalk.swift`의 `issueNewURL`, README 링크)
 - **릴리스 스크립트는 fork 전용.** (`scripts/release.sh`의 `REPO=leejongyoung/KleanTalk`, origin 확인 포함)
 - **식별자는 upstream과 공유 유지.** 번들 ID·LaunchDaemon 라벨·로그 서브시스템(`com.myungchul.kleantalk*`)·hosts 블록 표식은 바꾸지 않습니다. 설치된 기존 환경과 충돌하지 않게 하려는 의도입니다.
 - **멀티유저 지원 (#11, upstream #1 대응).** 인증서 신뢰가 사용자 도메인이라 계정마다 한 번씩 신뢰 등록이 필요합니다. 설치 스크립트가 앱이 `/Applications`에 있을 때 시스템 로그인 에이전트(`/Library/LaunchAgents`)를 등록해, 모든 계정(향후 계정 포함)의 로그인 때 백그라운드 확인을 돕니다. 풀려 있으면 창을 띄워 안내하므로, 다른 계정에서는 첫 로그인 때 안내대로 **다시 설치**(신뢰 등록)를 한 번 하세요. `~/Applications` 설치에서는 설치한 계정에서만 돕니다.
+
+## 서명 키 관리
+
+- 계정: 키체인 `kleantalk`, 공개키는 `Info.plist`의 `SUPublicEDKey` (공개 가능).
+- 원본: 릴리스용 Mac의 로그인 키체인. 백업: agent-workbench `inbox/kleantalk-signing/` (0600, Git 제외, 기기 간 백업으로 복제됨).
+- 유효성은 백업에서 공개키를 유도해 대조하는 방식으로 확인한다 (주기적).
+- 분실·유출 시: 새 키쌍 생성 → `SUPublicEDKey` 교체 → 구 버전 사용자는 수동 재설치. 릴리스 노트에 공지한다.
 
 ## 브랜치 운용
 
