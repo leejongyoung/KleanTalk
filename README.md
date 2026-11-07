@@ -17,13 +17,13 @@
   <a href="#-동작-방식">동작 방식</a> ·
   <a href="#-다른-방식과-비교">비교</a> ·
   <a href="#-문제-해결">문제 해결</a> ·
-  <a href="https://leejongyoung.github.io/KleanTalk/">🌐 웹사이트</a> ·
+  <a href="https://leejongyoung.github.io/KleanTalk/">웹사이트</a> ·
   <a href="#english">English</a>
 </p>
 
 > 카카오와 관계없는 비공식 개인 프로젝트입니다. 카톡 이용약관과 맞지 않을 수 있으니 확인하고 사용하세요.
 
-## 🚀 설치
+## 설치
 
 ```sh
 brew tap leejongyoung/kleantalk && brew install --cask kleantalk
@@ -41,10 +41,10 @@ brew tap leejongyoung/kleantalk && brew install --cask kleantalk
 
 이후엔 로그인할 때 창 없이 설정만 확인하고, 풀렸을 때만 창을 띄워 **다시 설치**를 권합니다.
 
-> 💡 `/Applications`(관리자 소유) 권장. 다른 macOS 계정에서도 쓰려면 `/Applications`에 두세요 —
+> `/Applications`(관리자 소유) 권장. 다른 macOS 계정에서도 쓰려면 `/Applications`에 두세요 —
 > 계정마다 첫 로그인 때 신뢰 등록 안내가 뜹니다.
 
-## 🧩 동작 방식
+## 동작 방식
 
 카카오톡은 광고를 못 받으면 홍보 배너를 대신 띄웁니다.
 그래서 막기만 해선 안 되고, 광고 요청을 **성공**시키되 내용만 비웁니다.
@@ -62,7 +62,7 @@ flowchart LR
 3. 서버가 카톡 창과 같은 색의 빈 화면을 돌려주고, 카카오톡은 정상 광고로 받아들입니다.
 4. 진짜 광고 서버에는 연결하지 않으니 광고 이미지·추적 코드·노출 집계가 오가지 않습니다.
 
-## 🆚 다른 방식과 비교
+## 다른 방식과 비교
 
 | | KleanTalk | hosts 직접 차단 | 앱 패치 방식 |
 |---|---|---|---|
@@ -71,7 +71,7 @@ flowchart LR
 | 카톡 업데이트 후 | 그대로 동작 | 그대로 (배너는 그대로) | 다시 패치 필요 |
 | 다른 계정 | 안내 후 1회 등록 | 계정 무관 (차단만) | 계정 무관 |
 
-## 🛠 문제 해결
+## 문제 해결
 
 | 증상 | 조치 |
 |---|---|
@@ -81,17 +81,17 @@ flowchart LR
 | `kleantalk-adserver` 확인 불가 경고 | 브라우저 DMG의 검역 표시 때문. 1.11.2부터 설치할 때 자동 제거되니 최신 DMG로 **다시 설치**하세요. |
 | 원격 연결·다른 앱 문제 | KleanTalk과 무관합니다 (원격 관리·화면 공유·방화벽을 건드리지 않음). |
 
-## 🧹 제거
+## 제거
 
 KleanTalk을 열고 **제거…**를 누릅니다. 서버·인증서 신뢰·hosts·로그인 항목을 모두 되돌리고 앱을 휴지통으로 옮깁니다.
 
-## 🐛 버그 신고
+## 버그 신고
 
 메뉴의 **버그 신고…**를 누르면 앱 버전·macOS·칩·카톡 버전·상태가 미리 채워진 이슈 화면이 열립니다.
 열기 전에 본문을 확인·편집할 수 있고, 홈 디렉터리 경로는 `~`로 가려집니다.
 ([직접 쓰기](https://github.com/leejongyoung/KleanTalk/issues/new?template=bug_report.md), GitHub 계정 필요)
 
-## 📋 요구 사항과 한계
+## 요구 사항과 한계
 
 - macOS 12 이상, Apple Silicon·Intel. 카톡 26.9.0에서 확인.
 - 카카오가 광고 방식을 바꾸면 동작하지 않을 수 있습니다 (주소·응답 형식·신호 변경 시).
@@ -99,7 +99,7 @@ KleanTalk을 열고 **제거…**를 누릅니다. 서버·인증서 신뢰·hos
 - 이 fork에는 자동 업데이트가 없습니다. 새 버전은 Releases에서 DMG를 받아 다시 설치하세요. (자세한 사정은 [`FORK.md`](FORK.md))
 
 <details>
-<summary><strong>🔍 이 맥에서 바뀌는 것</strong></summary>
+<summary><strong>이 맥에서 바뀌는 것</strong></summary>
 
 | 항목 | 위치 | 내용 |
 |---|---|---|
@@ -117,7 +117,7 @@ hosts는 맥 전체에 적용돼 브라우저의 카카오·다음 광고 주소
 </details>
 
 <details>
-<summary><strong>🔨 소스에서 빌드</strong></summary>
+<summary><strong>소스에서 빌드</strong></summary>
 
 ```sh
 ./build.sh                # build/KleanTalk.app (Xcode 필요)
@@ -136,7 +136,7 @@ sudo ./scripts/uninstall-adserver.sh    # 서버만 제거
 
 </details>
 
-## ⭐ Star History
+## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=leejongyoung/KleanTalk&type=timeline)](https://star-history.com/#leejongyoung/KleanTalk&timeline)
 
